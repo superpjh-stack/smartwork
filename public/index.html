@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>스마트공방 시스템</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- 로그인 화면 -->
+  <div class="login-container" id="login-container" style="display:none;">
+    <div class="login-card">
+      <h1>스마트공방</h1>
+      <p class="login-subtitle">스마트공방 관리 시스템에 로그인하세요</p>
+      <form id="login-form">
+        <div class="login-error" id="login-error"></div>
+        <div class="form-group">
+          <label for="login-username">아이디</label>
+          <input type="text" id="login-username" class="form-control" placeholder="아이디를 입력하세요" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="login-password">비밀번호</label>
+          <input type="password" id="login-password" class="form-control" placeholder="비밀번호를 입력하세요" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-login">로그인</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 앱 컨테이너 -->
+  <div class="app-container" id="app-container" style="display:none;">
+    <!-- 사이드바 -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>스마트공방</h1>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">📊</span>
+          <span>대시보드</span>
+        </a>
+        <a href="#" class="nav-item" data-page="products">
+          <span class="nav-icon">📦</span>
+          <span>제품 관리</span>
+        </a>
+        <a href="#" class="nav-item" data-page="inventory">
+          <span class="nav-icon">📋</span>
+          <span>재고 관리</span>
+        </a>
+        <a href="#" class="nav-item" data-page="customers">
+          <span class="nav-icon">🏢</span>
+          <span>거래처 관리</span>
+        </a>
+        <a href="#" class="nav-item" data-page="orders">
+          <span class="nav-icon">📝</span>
+          <span>주문 관리</span>
+        </a>
+        <a href="#" class="nav-item" data-page="productions">
+          <span class="nav-icon">🏭</span>
+          <span>생산 관리</span>
+        </a>
+        <a href="#" class="nav-item" data-page="shipments">
+          <span class="nav-icon">🚚</span>
+          <span>출하 관리</span>
+        </a>
+        <div class="nav-group" id="nav-group-kpi">
+          <a href="#" class="nav-item nav-group-toggle" data-group="kpi">
+            <span class="nav-icon">📊</span>
+            <span>KPI 관리</span>
+            <span class="nav-group-arrow">&#9662;</span>
+          </a>
+          <div class="nav-group-items">
+            <a href="#" class="nav-item nav-sub-item" data-page="kpi-productivity">
+              <span>생산성</span>
+            </a>
+            <a href="#" class="nav-item nav-sub-item" data-page="kpi-quality">
+              <span>품질</span>
+            </a>
+          </div>
+        </div>
+        <a href="#" class="nav-item" data-page="reports">
+          <span class="nav-icon">📈</span>
+          <span>리포트</span>
+        </a>
+        <a href="#" class="nav-item" data-page="settings">
+          <span class="nav-icon">⚙️</span>
+          <span>설정</span>
+        </a>
+        <a href="#" class="nav-item" data-page="users" id="nav-users" style="display:none;">
+          <span class="nav-icon">👤</span>
+          <span>회원 관리</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- 사이드바 오버레이 -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main-content">
+      <header class="content-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button class="menu-toggle" id="menu-toggle" aria-label="메뉴">&#9776;</button>
+          <h2 id="page-title">대시보드</h2>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="header-actions" id="header-actions"></div>
+          <div class="user-info" id="user-info"></div>
+        </div>
+      </header>
+      <div class="content-body" id="content-body">
+        <!-- 동적 컨텐츠 영역 -->
+      </div>
+    </main>
+  </div>
+
+  <!-- 모달 -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">모달</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer" id="modal-footer"></div>
+    </div>
+  </div>
+
+  <!-- 알림 토스트 -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/components/dashboard.js"></script>
+  <script src="/js/components/products.js"></script>
+  <script src="/js/components/inventory.js"></script>
+  <script src="/js/components/customers.js"></script>
+  <script src="/js/components/orders.js"></script>
+  <script src="/js/components/productions.js"></script>
+  <script src="/js/components/shipments.js"></script>
+  <script src="/js/components/reports.js"></script>
+  <script src="/js/components/settings.js"></script>
+  <script src="/js/components/users.js"></script>
+  <script src="/js/components/kpi-productivity.js"></script>
+  <script src="/js/components/kpi-quality.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
