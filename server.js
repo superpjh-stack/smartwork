@@ -74,8 +74,8 @@ app.use('/api/productions', authMiddleware, require('./routes/productions'));
 app.use('/api/shipments', authMiddleware, require('./routes/shipments'));
 app.use('/api/reports', authMiddleware, require('./routes/reports'));
 app.use('/api/settings', authMiddleware, require('./routes/settings'));
-app.use('/api/kpi', authMiddleware, require('./routes/kpi'));
 app.use('/api/kpi/external', authMiddleware, require('./routes/kpi-external'));
+app.use('/api/kpi', authMiddleware, require('./routes/kpi'));
 
 // 메인 페이지
 app.get('/', (req, res) => {
