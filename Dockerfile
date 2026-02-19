@@ -16,4 +16,4 @@ COPY . .
 # Cloud Run이 PORT 환경변수를 자동 설정
 EXPOSE 8080
 
-CMD ["node", "server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]

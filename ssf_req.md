@@ -2,7 +2,7 @@
 
 > **버전**: 1.0.0
 > **최종 수정일**: 2026-02-09
-> **배포 URL**: https://smartwork-1010037633663.asia-northeast3.run.app
+> **배포 URL**: https://smartwork-419291531449.asia-northeast3.run.app
 
 ---
 
@@ -15,7 +15,7 @@
 | 구분 | 기술 |
 |------|------|
 | 백엔드 | Node.js + Express 4.18.2 |
-| 데이터베이스 | SQLite3 (better-sqlite3 9.2.2) |
+| 데이터베이스 | PostgreSQL (Prisma ORM) — GCP Cloud SQL |
 | 프론트엔드 | Vanilla JavaScript (SPA) |
 | 인증 | 세션 토큰 + SHA-256 해싱 |
 | 배포 | Google Cloud Run (Docker) |
@@ -617,7 +617,7 @@
 |------|-----|
 | 시스템명 | 스마트공방 시스템 |
 | 버전 | 1.0.0 |
-| 데이터베이스 | SQLite3 |
+| 데이터베이스 | PostgreSQL (Prisma ORM) |
 | 서버 | Node.js + Express |
 
 ---

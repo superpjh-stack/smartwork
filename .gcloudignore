@@ -1,7 +1,7 @@
-node_modules
-npm-debug.log
 .git
 .gitignore
+node_modules
+npm-debug.log
 database/*.db
 *.md
 .env
@@ -11,3 +11,4 @@ cloud-sql-proxy.exe
 .claude
 docs
 nul
+*.exe

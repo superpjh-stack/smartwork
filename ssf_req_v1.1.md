@@ -1,7 +1,7 @@
 # 스마트공방 관리 시스템 - 기능명세서 (상세/주석 강화본)
 > **버전**: 1.1.0  
 > **최종 수정일**: 2026-02-10  
-> **배포 URL**: https://smartwork-1010037633663.asia-northeast3.run.app  
+> **배포 URL**: https://smartwork-419291531449.asia-northeast3.run.app
 
 ---
 
@@ -46,14 +46,14 @@
 | 구분 | 기술 |
 |------|------|
 | 백엔드 | Node.js + Express 4.18.2 |
-| 데이터베이스 | SQLite3 (better-sqlite3 9.2.2) |
+| 데이터베이스 | PostgreSQL (Prisma ORM) — GCP Cloud SQL |
 | 프론트엔드 | Vanilla JavaScript (SPA) |
 | 인증 | 세션 토큰 + SHA-256 해싱 |
 | 배포 | Google Cloud Run (Docker) |
 
 > ※ 주석(정부 과제 관점에서 자주 보는 포인트)
 > - **배포**: Cloud Run은 무중단 배포/오토스케일에 유리하나, 공공기관/지자체 납품 시 “망 분리/보안/로그 보관” 요구가 있을 수 있어 운영 정책을 별도 정의한다.  
-> - **DB**: SQLite는 PoC/시범에 적합. 다기관/대규모 확장 시 PostgreSQL/MySQL로 전환 가능하도록 “SQL 방언 의존”을 최소화한다.  
+> - **DB**: PostgreSQL(GCP Cloud SQL)을 사용하며, Prisma ORM으로 DB 접근을 추상화하여 마이그레이션/스키마 관리를 자동화한다.
 > - **SPA**: 단일 페이지 앱 특성상 인증 만료/401 처리 UX가 중요(자동 로그아웃 + 안내 토스트).
 
 ### 1.3 사용자 역할
