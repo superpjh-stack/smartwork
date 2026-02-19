@@ -76,7 +76,7 @@ async function renderProductions() {
             </div>
           ` : `
             <div class="empty-state">
-              <div class="icon">🏭</div>
+              <i data-lucide="factory" class="empty-icon"></i>
               <p>등록된 생산이 없습니다.</p>
             </div>
           `}
@@ -299,7 +299,7 @@ async function openCompleteProductionModal(id) {
             <input type="number" id="complete-waste" class="form-control" value="0" min="0">
           </div>
         </div>
-        <p style="color: var(--text-light); font-size: 0.9rem;">
+        <p style="color: var(--color-text-secondary); font-size: 0.9rem;">
           * 재고에는 (실제 수량 - 불량 - 폐기) 만큼 입고됩니다.
         </p>
       </form>

@@ -38,8 +38,8 @@ async function openKpiSettingsModal() {
     let html = '<div style="max-height:60vh;overflow-y:auto;">';
     fields.forEach(f => {
       html += `
-        <div style="margin-bottom:16px;padding:12px;background:#f8f9fa;border-radius:6px;">
-          <h4 style="margin-bottom:8px;">${f.group} <small style="color:#7f8c8d;">(${f.desc})</small></h4>
+        <div style="margin-bottom:16px;padding:12px;background:var(--color-gray-50);border-radius:6px;">
+          <h4 style="margin-bottom:8px;">${f.group} <small style="color:var(--color-text-secondary);">(${f.desc})</small></h4>
           <div class="form-row">
             <div class="form-group">
               <label>목표 (${f.unit})</label>
@@ -198,7 +198,7 @@ async function renderKpiProductivity() {
 
     loadProductivityData();
   } catch (error) {
-    container.innerHTML = `<div class="empty-state"><div class="icon">!</div><p>데이터 로드 실패: ${error.message}</p></div>`;
+    container.innerHTML = `<div class="empty-state"><i data-lucide="alert-circle" class="empty-icon"></i><p>데이터 로드 실패: ${error.message}</p></div>`;
   }
 }
 
@@ -239,7 +239,7 @@ async function loadProductivityData() {
     // 일별 테이블
     const dailyBody = document.getElementById('kpi-prod-daily-body');
     if (data.daily.length === 0) {
-      dailyBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#7f8c8d;">데이터가 없습니다.</td></tr>';
+      dailyBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--color-text-secondary);">데이터가 없습니다.</td></tr>';
     } else {
       dailyBody.innerHTML = data.daily.map(d => {
         const status = getKpiStatus(d.pi, 'pi');
@@ -258,7 +258,7 @@ async function loadProductivityData() {
     // 제품별 테이블
     const productBody = document.getElementById('kpi-prod-product-body');
     if (data.byProduct.length === 0) {
-      productBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#7f8c8d;">데이터가 없습니다.</td></tr>';
+      productBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--color-text-secondary);">데이터가 없습니다.</td></tr>';
     } else {
       productBody.innerHTML = data.byProduct.map(p => {
         const status = getKpiStatus(p.pi, 'pi');

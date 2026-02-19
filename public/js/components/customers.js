@@ -48,7 +48,7 @@ async function renderCustomers() {
             </div>
           ` : `
             <div class="empty-state">
-              <div class="icon">🏢</div>
+              <i data-lucide="building-2" class="empty-icon"></i>
               <p>등록된 거래처가 없습니다.</p>
             </div>
           `}
@@ -112,7 +112,7 @@ async function viewCustomer(id) {
             `).join('')}
           </tbody>
         </table>
-      ` : '<p style="margin-top: 20px; color: var(--text-light);">주문 이력이 없습니다.</p>'}
+      ` : '<p style="margin-top: 20px; color: var(--color-text-secondary);">주문 이력이 없습니다.</p>'}
     `;
 
     const footer = `<button class="btn btn-secondary" onclick="closeModal()">닫기</button>`;

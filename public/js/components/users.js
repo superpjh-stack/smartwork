@@ -56,7 +56,7 @@ async function renderUsers() {
             </div>
           ` : `
             <div class="empty-state">
-              <div class="icon">👤</div>
+              <i data-lucide="users" class="empty-icon"></i>
               <p>등록된 사용자가 없습니다.</p>
             </div>
           `}

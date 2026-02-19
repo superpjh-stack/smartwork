@@ -73,7 +73,7 @@ async function renderOrders() {
             </div>
           ` : `
             <div class="empty-state">
-              <div class="icon">📝</div>
+              <i data-lucide="clipboard-list" class="empty-icon"></i>
               <p>등록된 주문이 없습니다.</p>
             </div>
           `}
@@ -151,7 +151,7 @@ async function viewOrder(id) {
               <td>${formatNumber(item.quantity * item.unit_price)}원</td>
             </tr>
           `).join('')}
-          <tr style="font-weight: bold; background-color: #f8f9fa;">
+          <tr style="font-weight: bold; background-color: var(--color-gray-50);">
             <td colspan="5" style="text-align: right;">합계</td>
             <td>${formatNumber(order.total_amount)}원</td>
           </tr>
@@ -295,7 +295,7 @@ function renderOrderItems() {
   const totalEl = document.getElementById('order-total');
 
   if (orderItems.length === 0) {
-    container.innerHTML = '<div style="color: var(--text-light); text-align: center; padding: 20px;">품목을 추가해주세요.</div>';
+    container.innerHTML = '<div style="color: var(--color-text-secondary); text-align: center; padding: 20px;">품목을 추가해주세요.</div>';
     totalEl.innerHTML = '';
     return;
   }

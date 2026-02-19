@@ -76,7 +76,7 @@ async function renderInventoryList() {
             </div>
           ` : `
             <div class="empty-state">
-              <div class="icon">📋</div>
+              <i data-lucide="warehouse" class="empty-icon"></i>
               <p>등록된 재고가 없습니다.</p>
             </div>
           `}
@@ -130,7 +130,7 @@ async function renderInventoryHistory() {
             </div>
           ` : `
             <div class="empty-state">
-              <div class="icon">📋</div>
+              <i data-lucide="clipboard-list" class="empty-icon"></i>
               <p>입출고 이력이 없습니다.</p>
             </div>
           `}

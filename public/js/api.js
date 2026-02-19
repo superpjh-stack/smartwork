@@ -219,5 +219,16 @@ const API = {
       const query = new URLSearchParams(params).toString();
       return API.get(`/kpi/snapshots${query ? '?' + query : ''}`);
     },
+    external: {
+      getSettings: () => API.get('/kpi/external/settings'),
+      saveSettings: (data) => API.put('/kpi/external/settings', data),
+      preview: (date) => API.get(`/kpi/external/preview?date=${date}`),
+      send: (data) => API.post('/kpi/external/send', data),
+      retry: (id) => API.post(`/kpi/external/retry/${id}`),
+      getHistory: (params = {}) => {
+        const query = new URLSearchParams(params).toString();
+        return API.get(`/kpi/external/history${query ? '?' + query : ''}`);
+      },
+    },
   },
 };

@@ -1,9 +1,10 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-
-// 데이터베이스 초기화
-const db = require('./database/init');
+const prisma = require('./lib/prisma');
+const { initScheduler, stopScheduler } = require('./lib/kpi-scheduler');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,11 +14,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 데이터베이스를 라우터에서 사용할 수 있도록 설정
-app.locals.db = db;
+// Prisma를 라우터에서 사용할 수 있도록 설정
+app.locals.prisma = prisma;
 
 // 인증 미들웨어
-function authMiddleware(req, res, next) {
+async function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -27,27 +28,30 @@ function authMiddleware(req, res, next) {
   const token = authHeader.slice(7);
 
   try {
-    const session = db.prepare(`
-      SELECT s.*, u.id as user_id, u.username, u.name, u.role, u.company_id, u.is_active
-      FROM sessions s
-      JOIN users u ON s.user_id = u.id
-      WHERE s.token = ? AND s.expires_at > datetime('now')
-    `).get(token);
+    const session = await prisma.session.findFirst({
+      where: {
+        token,
+        expiresAt: { gt: new Date() },
+      },
+      include: {
+        user: true,
+      },
+    });
 
     if (!session) {
       return res.status(401).json({ error: '유효하지 않은 세션입니다.' });
     }
 
-    if (!session.is_active) {
+    if (!session.user.isActive) {
       return res.status(401).json({ error: '비활성화된 계정입니다.' });
     }
 
     req.user = {
-      id: session.user_id,
-      username: session.username,
-      name: session.name,
-      role: session.role,
-      company_id: session.company_id,
+      id: session.user.id,
+      username: session.user.username,
+      name: session.user.name,
+      role: session.user.role,
+      company_id: session.user.companyId,
     };
 
     next();
@@ -71,6 +75,7 @@ app.use('/api/shipments', authMiddleware, require('./routes/shipments'));
 app.use('/api/reports', authMiddleware, require('./routes/reports'));
 app.use('/api/settings', authMiddleware, require('./routes/settings'));
 app.use('/api/kpi', authMiddleware, require('./routes/kpi'));
+app.use('/api/kpi/external', authMiddleware, require('./routes/kpi-external'));
 
 // 메인 페이지
 app.get('/', (req, res) => {
@@ -83,6 +88,20 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: '서버 오류가 발생했습니다.' });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`스마트공방 서버가 http://localhost:${PORT} 에서 실행 중입니다.`);
+  initScheduler(prisma);
 });
+
+// Graceful shutdown
+async function shutdown() {
+  console.log('서버 종료 중...');
+  stopScheduler();
+  await prisma.$disconnect();
+  server.close(() => {
+    process.exit(0);
+  });
+}
+
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);

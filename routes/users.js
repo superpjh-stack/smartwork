@@ -10,81 +10,94 @@ function hashPassword(password) {
 }
 
 // 회사 목록 (사용자 생성 시 필요 - /:id보다 먼저 정의해야 함)
-router.get('/companies/list', (req, res) => {
-  const db = req.app.locals.db;
+router.get('/companies/list', async (req, res) => {
+  const prisma = req.app.locals.prisma;
 
   try {
-    const companies = db.prepare('SELECT id, company_code, name FROM companies ORDER BY name').all();
-    res.json(companies);
+    const companies = await prisma.company.findMany({
+      select: { id: true, companyCode: true, name: true },
+      orderBy: { name: 'asc' },
+    });
+
+    res.json(companies.map(c => ({
+      id: c.id,
+      company_code: c.companyCode,
+      name: c.name,
+    })));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // 사용자 목록 조회
-router.get('/', (req, res) => {
-  const db = req.app.locals.db;
+router.get('/', async (req, res) => {
+  const prisma = req.app.locals.prisma;
   const currentUser = req.user;
 
   try {
-    let users;
-    if (currentUser.role === 'super_admin') {
-      users = db.prepare(`
-        SELECT u.id, u.username, u.name, u.role, u.company_id, u.is_active, u.created_at,
-               c.name as company_name, c.company_code
-        FROM users u
-        LEFT JOIN companies c ON u.company_id = c.id
-        ORDER BY u.created_at DESC
-      `).all();
-    } else {
-      users = db.prepare(`
-        SELECT u.id, u.username, u.name, u.role, u.company_id, u.is_active, u.created_at,
-               c.name as company_name, c.company_code
-        FROM users u
-        LEFT JOIN companies c ON u.company_id = c.id
-        WHERE u.company_id = ?
-        ORDER BY u.created_at DESC
-      `).all(currentUser.company_id);
-    }
+    const where = currentUser.role === 'super_admin' ? {} : { companyId: currentUser.company_id };
 
-    res.json(users);
+    const users = await prisma.user.findMany({
+      where,
+      include: { company: { select: { name: true, companyCode: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    res.json(users.map(u => ({
+      id: u.id,
+      username: u.username,
+      name: u.name,
+      role: u.role,
+      company_id: u.companyId,
+      is_active: u.isActive,
+      created_at: u.createdAt,
+      company_name: u.company?.name ?? null,
+      company_code: u.company?.companyCode ?? null,
+    })));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // 사용자 상세 조회
-router.get('/:id', (req, res) => {
-  const db = req.app.locals.db;
+router.get('/:id', async (req, res) => {
+  const prisma = req.app.locals.prisma;
   const currentUser = req.user;
 
   try {
-    const user = db.prepare(`
-      SELECT u.id, u.username, u.name, u.role, u.company_id, u.is_active, u.created_at,
-             c.name as company_name, c.company_code
-      FROM users u
-      LEFT JOIN companies c ON u.company_id = c.id
-      WHERE u.id = ?
-    `).get(req.params.id);
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(req.params.id) },
+      include: { company: { select: { name: true, companyCode: true } } },
+    });
 
     if (!user) {
       return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
     }
 
     // company_admin은 자기 회사 소속만 조회 가능
-    if (currentUser.role !== 'super_admin' && user.company_id !== currentUser.company_id) {
+    if (currentUser.role !== 'super_admin' && user.companyId !== currentUser.company_id) {
       return res.status(403).json({ error: '권한이 없습니다.' });
     }
 
-    res.json(user);
+    res.json({
+      id: user.id,
+      username: user.username,
+      name: user.name,
+      role: user.role,
+      company_id: user.companyId,
+      is_active: user.isActive,
+      created_at: user.createdAt,
+      company_name: user.company?.name ?? null,
+      company_code: user.company?.companyCode ?? null,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // 사용자 생성 (super_admin만)
-router.post('/', (req, res) => {
-  const db = req.app.locals.db;
+router.post('/', async (req, res) => {
+  const prisma = req.app.locals.prisma;
   const currentUser = req.user;
 
   if (currentUser.role !== 'super_admin') {
@@ -103,15 +116,23 @@ router.post('/', (req, res) => {
 
   try {
     const passwordHash = hashPassword(password);
-    const stmt = db.prepare('INSERT INTO users (username, password_hash, name, role, company_id, is_active) VALUES (?, ?, ?, ?, ?, ?)');
-    const result = stmt.run(username, passwordHash, name, role || 'company_admin', company_id || null, is_active !== undefined ? is_active : 1);
+    const user = await prisma.user.create({
+      data: {
+        username,
+        passwordHash,
+        name,
+        role: role || 'company_admin',
+        companyId: company_id || null,
+        isActive: is_active !== undefined ? Boolean(is_active) : true,
+      },
+    });
 
     res.status(201).json({
-      id: result.lastInsertRowid,
+      id: user.id,
       message: '사용자가 등록되었습니다.',
     });
   } catch (error) {
-    if (error.message.includes('UNIQUE constraint failed')) {
+    if (error.code === 'P2002') {
       return res.status(400).json({ error: '이미 존재하는 아이디입니다.' });
     }
     res.status(500).json({ error: error.message });
@@ -119,8 +140,8 @@ router.post('/', (req, res) => {
 });
 
 // 사용자 수정
-router.put('/:id', (req, res) => {
-  const db = req.app.locals.db;
+router.put('/:id', async (req, res) => {
+  const prisma = req.app.locals.prisma;
   const currentUser = req.user;
   const targetId = parseInt(req.params.id);
 
@@ -136,31 +157,31 @@ router.put('/:id', (req, res) => {
   }
 
   try {
+    const data = {};
+
+    if (currentUser.role === 'super_admin') {
+      data.username = username;
+      data.name = name;
+      data.role = role || 'company_admin';
+      data.companyId = company_id || null;
+      data.isActive = is_active !== undefined ? Boolean(is_active) : true;
+    } else {
+      data.username = username;
+      data.name = name;
+    }
+
     if (password && password.length > 0) {
       if (password.length < 4) {
         return res.status(400).json({ error: '비밀번호는 4자 이상이어야 합니다.' });
       }
-      const passwordHash = hashPassword(password);
-      if (currentUser.role === 'super_admin') {
-        db.prepare('UPDATE users SET username = ?, password_hash = ?, name = ?, role = ?, company_id = ?, is_active = ? WHERE id = ?')
-          .run(username, passwordHash, name, role || 'company_admin', company_id || null, is_active !== undefined ? is_active : 1, targetId);
-      } else {
-        db.prepare('UPDATE users SET username = ?, password_hash = ?, name = ? WHERE id = ?')
-          .run(username, passwordHash, name, targetId);
-      }
-    } else {
-      if (currentUser.role === 'super_admin') {
-        db.prepare('UPDATE users SET username = ?, name = ?, role = ?, company_id = ?, is_active = ? WHERE id = ?')
-          .run(username, name, role || 'company_admin', company_id || null, is_active !== undefined ? is_active : 1, targetId);
-      } else {
-        db.prepare('UPDATE users SET username = ?, name = ? WHERE id = ?')
-          .run(username, name, targetId);
-      }
+      data.passwordHash = hashPassword(password);
     }
+
+    await prisma.user.update({ where: { id: targetId }, data });
 
     res.json({ message: '사용자가 수정되었습니다.' });
   } catch (error) {
-    if (error.message.includes('UNIQUE constraint failed')) {
+    if (error.code === 'P2002') {
       return res.status(400).json({ error: '이미 존재하는 아이디입니다.' });
     }
     res.status(500).json({ error: error.message });
@@ -168,8 +189,8 @@ router.put('/:id', (req, res) => {
 });
 
 // 사용자 삭제 (super_admin만)
-router.delete('/:id', (req, res) => {
-  const db = req.app.locals.db;
+router.delete('/:id', async (req, res) => {
+  const prisma = req.app.locals.prisma;
   const currentUser = req.user;
 
   if (currentUser.role !== 'super_admin') {
@@ -184,14 +205,12 @@ router.delete('/:id', (req, res) => {
   }
 
   try {
-    const result = db.prepare('DELETE FROM users WHERE id = ?').run(targetId);
-
-    if (result.changes === 0) {
-      return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
-    }
-
+    await prisma.user.delete({ where: { id: targetId } });
     res.json({ message: '사용자가 삭제되었습니다.' });
   } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
+    }
     res.status(500).json({ error: error.message });
   }
 });

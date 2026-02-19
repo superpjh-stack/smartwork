@@ -4,26 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>스마트공방 시스템</title>
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
   <link rel="stylesheet" href="/css/style.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest" defer></script>
 </head>
 <body>
   <!-- 로그인 화면 -->
   <div class="login-container" id="login-container" style="display:none;">
-    <div class="login-card">
-      <h1>스마트공방</h1>
-      <p class="login-subtitle">스마트공방 관리 시스템에 로그인하세요</p>
-      <form id="login-form">
-        <div class="login-error" id="login-error"></div>
-        <div class="form-group">
-          <label for="login-username">아이디</label>
-          <input type="text" id="login-username" class="form-control" placeholder="아이디를 입력하세요" autocomplete="username">
-        </div>
-        <div class="form-group">
-          <label for="login-password">비밀번호</label>
-          <input type="password" id="login-password" class="form-control" placeholder="비밀번호를 입력하세요" autocomplete="current-password">
-        </div>
-        <button type="submit" class="btn-login">로그인</button>
-      </form>
+    <div class="login-brand">
+      <div class="login-brand-content">
+        <i data-lucide="factory" style="width:64px;height:64px;margin-bottom:24px;opacity:0.9;"></i>
+        <h2>스마트공방</h2>
+        <p>제조 실행 시스템으로 생산성과 품질을 혁신하세요</p>
+      </div>
+    </div>
+    <div class="login-form-side">
+      <div class="login-card">
+        <h1>로그인</h1>
+        <p class="login-subtitle">스마트공방 관리 시스템에 로그인하세요</p>
+        <form id="login-form">
+          <div class="login-error" id="login-error"></div>
+          <div class="form-group">
+            <label for="login-username">아이디</label>
+            <input type="text" id="login-username" class="form-control" placeholder="아이디를 입력하세요" autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label for="login-password">비밀번호</label>
+            <input type="password" id="login-password" class="form-control" placeholder="비밀번호를 입력하세요" autocomplete="current-password">
+          </div>
+          <button type="submit" class="btn-login">로그인</button>
+        </form>
+        <p class="login-version">v1.1.0</p>
+      </div>
     </div>
   </div>
 
@@ -33,62 +48,72 @@
     <aside class="sidebar">
       <div class="sidebar-header">
         <h1>스마트공방</h1>
+        <p class="sidebar-subtitle">Smart Factory MES</p>
       </div>
       <nav class="sidebar-nav">
+        <div class="nav-section-label">기본</div>
         <a href="#" class="nav-item active" data-page="dashboard">
-          <span class="nav-icon">📊</span>
-          <span>대시보드</span>
+          <i data-lucide="layout-dashboard" class="nav-icon"></i>
+          <span class="nav-label">대시보드</span>
         </a>
         <a href="#" class="nav-item" data-page="products">
-          <span class="nav-icon">📦</span>
-          <span>제품 관리</span>
+          <i data-lucide="package" class="nav-icon"></i>
+          <span class="nav-label">제품 관리</span>
         </a>
         <a href="#" class="nav-item" data-page="inventory">
-          <span class="nav-icon">📋</span>
-          <span>재고 관리</span>
+          <i data-lucide="warehouse" class="nav-icon"></i>
+          <span class="nav-label">재고 관리</span>
         </a>
         <a href="#" class="nav-item" data-page="customers">
-          <span class="nav-icon">🏢</span>
-          <span>거래처 관리</span>
+          <i data-lucide="building-2" class="nav-icon"></i>
+          <span class="nav-label">거래처 관리</span>
         </a>
         <a href="#" class="nav-item" data-page="orders">
-          <span class="nav-icon">📝</span>
-          <span>주문 관리</span>
+          <i data-lucide="clipboard-list" class="nav-icon"></i>
+          <span class="nav-label">주문 관리</span>
         </a>
+
+        <div class="nav-section-label">운영</div>
         <a href="#" class="nav-item" data-page="productions">
-          <span class="nav-icon">🏭</span>
-          <span>생산 관리</span>
+          <i data-lucide="factory" class="nav-icon"></i>
+          <span class="nav-label">생산 관리</span>
         </a>
         <a href="#" class="nav-item" data-page="shipments">
-          <span class="nav-icon">🚚</span>
-          <span>출하 관리</span>
+          <i data-lucide="truck" class="nav-icon"></i>
+          <span class="nav-label">출하 관리</span>
         </a>
+
+        <div class="nav-section-label">분석</div>
         <div class="nav-group" id="nav-group-kpi">
           <a href="#" class="nav-item nav-group-toggle" data-group="kpi">
-            <span class="nav-icon">📊</span>
-            <span>KPI 관리</span>
-            <span class="nav-group-arrow">&#9662;</span>
+            <i data-lucide="bar-chart-3" class="nav-icon"></i>
+            <span class="nav-label">KPI 관리</span>
+            <span class="nav-group-arrow">
+              <i data-lucide="chevron-down"></i>
+            </span>
           </a>
           <div class="nav-group-items">
             <a href="#" class="nav-item nav-sub-item" data-page="kpi-productivity">
-              <span>생산성</span>
+              <span class="nav-label">생산성</span>
             </a>
             <a href="#" class="nav-item nav-sub-item" data-page="kpi-quality">
-              <span>품질</span>
+              <span class="nav-label">품질</span>
             </a>
           </div>
         </div>
         <a href="#" class="nav-item" data-page="reports">
-          <span class="nav-icon">📈</span>
-          <span>리포트</span>
+          <i data-lucide="file-bar-chart" class="nav-icon"></i>
+          <span class="nav-label">리포트</span>
         </a>
+
+        <div class="nav-section-label">시스템</div>
         <a href="#" class="nav-item" data-page="settings">
-          <span class="nav-icon">⚙️</span>
-          <span>설정</span>
+          <i data-lucide="settings" class="nav-icon"></i>
+          <span class="nav-label">설정</span>
         </a>
         <a href="#" class="nav-item" data-page="users" id="nav-users" style="display:none;">
-          <span class="nav-icon">👤</span>
-          <span>회원 관리</span>
+          <i data-lucide="users" class="nav-icon"></i>
+          <span class="nav-label">회원 관리</span>
         </a>
       </nav>
     </aside>
@@ -103,8 +128,12 @@
           <button class="menu-toggle" id="menu-toggle" aria-label="메뉴">&#9776;</button>
           <h2 id="page-title">대시보드</h2>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;gap:12px;">
           <div class="header-actions" id="header-actions"></div>
+          <button class="theme-toggle" id="theme-toggle" aria-label="테마 전환">
+            <i data-lucide="sun" class="theme-icon-light" style="width:18px;height:18px;"></i>
+            <i data-lucide="moon" class="theme-icon-dark" style="width:18px;height:18px;"></i>
+          </button>
           <div class="user-info" id="user-info"></div>
         </div>
       </header>

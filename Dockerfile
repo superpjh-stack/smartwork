@@ -1,13 +1,14 @@
 FROM node:18-alpine
 
-# better-sqlite3 네이티브 빌드에 필요한 도구 설치
-RUN apk add --no-cache python3 make g++
-
 WORKDIR /app
 
 # 의존성 파일 복사 및 설치
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
+
+# Prisma 스키마 복사 및 클라이언트 생성
+COPY prisma ./prisma/
+RUN npx prisma generate
 
 # 앱 소스 복사
 COPY . .

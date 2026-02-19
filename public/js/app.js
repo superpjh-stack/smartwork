@@ -34,6 +34,29 @@ const pageRenderers = {
   'kpi-quality': renderKpiQuality,
 };
 
+// === 테마 관리 ===
+function initTheme() {
+  const saved = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  refreshIcons();
+}
+
+// === Lucide 아이콘 초기화 ===
+function refreshIcons() {
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+}
+
 // 로그인 화면 표시
 function showLoginScreen() {
   currentUser = null;
@@ -43,6 +66,7 @@ function showLoginScreen() {
   document.getElementById('login-username').value = '';
   document.getElementById('login-password').value = '';
   document.getElementById('login-username').focus();
+  refreshIcons();
 }
 
 // 앱 화면 표시
@@ -119,7 +143,7 @@ async function checkAuth() {
 }
 
 // 페이지 전환
-function navigateTo(page) {
+async function navigateTo(page) {
   currentPage = page;
 
   // 네비게이션 활성화
@@ -148,8 +172,11 @@ function navigateTo(page) {
 
   // 페이지 렌더
   if (pageRenderers[page]) {
-    pageRenderers[page]();
+    await pageRenderers[page]();
   }
+
+  // 페이지 렌더 후 Lucide 아이콘 초기화
+  refreshIcons();
 }
 
 // 모달 열기
@@ -158,6 +185,7 @@ function openModal(title, bodyHtml, footerHtml = '') {
   document.getElementById('modal-body').innerHTML = bodyHtml;
   document.getElementById('modal-footer').innerHTML = footerHtml;
   document.getElementById('modal-overlay').classList.add('active');
+  refreshIcons();
 }
 
 // 모달 닫기
@@ -167,15 +195,22 @@ function closeModal() {
 
 // 토스트 알림
 function showToast(message, type = 'info') {
+  const icons = {
+    success: 'check-circle',
+    error: 'x-circle',
+    warning: 'alert-triangle',
+    info: 'info'
+  };
   const container = document.getElementById('toast-container');
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
-  toast.textContent = message;
+  toast.innerHTML = `
+    <i data-lucide="${icons[type] || 'info'}" style="width:20px;height:20px;flex-shrink:0;"></i>
+    <span>${message}</span>
+  `;
   container.appendChild(toast);
-
-  setTimeout(() => {
-    toast.remove();
-  }, 3000);
+  if (window.lucide) lucide.createIcons({ nodes: [toast] });
+  setTimeout(() => toast.remove(), 3000);
 }
 
 // 숫자 포맷
@@ -222,6 +257,12 @@ function closeSidebar() {
 
 // 이벤트 리스너 설정
 document.addEventListener('DOMContentLoaded', () => {
+  // 테마 초기화
+  initTheme();
+
+  // 테마 토글 버튼
+  document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
   // 햄버거 메뉴 토글
   document.getElementById('menu-toggle').addEventListener('click', toggleSidebar);
   document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar);
@@ -257,6 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     handleLogin();
   });
+
+  // Lucide 아이콘 초기화
+  refreshIcons();
 
   // 인증 상태 확인 후 적절한 화면 표시
   checkAuth();

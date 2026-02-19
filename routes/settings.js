@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 // 설정 목록 조회
-router.get('/', (req, res) => {
-  const db = req.app.locals.db;
+router.get('/', async (req, res) => {
+  const prisma = req.app.locals.prisma;
 
   try {
-    const settings = db.prepare('SELECT * FROM settings').all();
+    const settings = await prisma.setting.findMany();
     const settingsObj = {};
     settings.forEach(s => settingsObj[s.key] = s.value);
     res.json(settingsObj);
@@ -16,11 +16,11 @@ router.get('/', (req, res) => {
 });
 
 // 특정 설정 조회
-router.get('/:key', (req, res) => {
-  const db = req.app.locals.db;
+router.get('/:key', async (req, res) => {
+  const prisma = req.app.locals.prisma;
 
   try {
-    const setting = db.prepare('SELECT * FROM settings WHERE key = ?').get(req.params.key);
+    const setting = await prisma.setting.findUnique({ where: { key: req.params.key } });
 
     if (!setting) {
       return res.status(404).json({ error: '설정을 찾을 수 없습니다.' });
@@ -33,12 +33,16 @@ router.get('/:key', (req, res) => {
 });
 
 // 설정 저장/수정
-router.put('/:key', (req, res) => {
-  const db = req.app.locals.db;
+router.put('/:key', async (req, res) => {
+  const prisma = req.app.locals.prisma;
   const { value } = req.body;
 
   try {
-    db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run(req.params.key, value);
+    await prisma.setting.upsert({
+      where: { key: req.params.key },
+      update: { value },
+      create: { key: req.params.key, value },
+    });
     res.json({ message: '설정이 저장되었습니다.' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -46,16 +50,20 @@ router.put('/:key', (req, res) => {
 });
 
 // 일괄 설정 저장
-router.post('/bulk', (req, res) => {
-  const db = req.app.locals.db;
+router.post('/bulk', async (req, res) => {
+  const prisma = req.app.locals.prisma;
   const settings = req.body;
 
   try {
-    const stmt = db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
-
-    Object.entries(settings).forEach(([key, value]) => {
-      stmt.run(key, value);
-    });
+    await prisma.$transaction(
+      Object.entries(settings).map(([key, value]) =>
+        prisma.setting.upsert({
+          where: { key },
+          update: { value },
+          create: { key, value },
+        })
+      )
+    );
 
     res.json({ message: '설정이 저장되었습니다.' });
   } catch (error) {
@@ -64,18 +72,16 @@ router.post('/bulk', (req, res) => {
 });
 
 // 설정 삭제
-router.delete('/:key', (req, res) => {
-  const db = req.app.locals.db;
+router.delete('/:key', async (req, res) => {
+  const prisma = req.app.locals.prisma;
 
   try {
-    const result = db.prepare('DELETE FROM settings WHERE key = ?').run(req.params.key);
-
-    if (result.changes === 0) {
-      return res.status(404).json({ error: '설정을 찾을 수 없습니다.' });
-    }
-
+    await prisma.setting.delete({ where: { key: req.params.key } });
     res.json({ message: '설정이 삭제되었습니다.' });
   } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: '설정을 찾을 수 없습니다.' });
+    }
     res.status(500).json({ error: error.message });
   }
 });

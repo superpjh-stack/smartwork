@@ -1,0 +1,232 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  productCode String   @unique @map("product_code")
+  name        String
+  unit        String   @default("개")
+  price       Float    @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  inventory        Inventory?
+  inventoryHistory InventoryHistory[]
+  orderItems       OrderItem[]
+  productions      Production[]
+  shipmentItems    ShipmentItem[]
+  kpiDaily         KpiDaily[]
+
+  @@map("products")
+}
+
+model Inventory {
+  id        Int      @id @default(autoincrement())
+  productId Int      @unique @map("product_id")
+  quantity  Int      @default(0)
+  location  String?
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("inventory")
+}
+
+model InventoryHistory {
+  id         Int      @id @default(autoincrement())
+  productId  Int      @map("product_id")
+  changeType String   @map("change_type")
+  quantity   Int
+  reason     String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("inventory_history")
+}
+
+model Customer {
+  id           Int      @id @default(autoincrement())
+  customerCode String   @unique @map("customer_code")
+  name         String
+  contact      String?
+  address      String?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  orders Order[]
+
+  @@map("customers")
+}
+
+model Order {
+  id          Int      @id @default(autoincrement())
+  orderNumber String   @unique @map("order_number")
+  customerId  Int      @map("customer_id")
+  orderDate   DateTime @default(now()) @map("order_date") @db.Date
+  dueDate     DateTime? @map("due_date") @db.Date
+  status      String   @default("대기")
+  totalAmount Float    @default(0) @map("total_amount")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  customer    Customer      @relation(fields: [customerId], references: [id])
+  items       OrderItem[]
+  productions Production[]
+  shipments   Shipment[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        Int   @id @default(autoincrement())
+  orderId   Int   @map("order_id")
+  productId Int   @map("product_id")
+  quantity  Int
+  unitPrice Float @map("unit_price")
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model Production {
+  id               Int       @id @default(autoincrement())
+  productionNumber String    @unique @map("production_number")
+  orderId          Int?      @map("order_id")
+  productId        Int       @map("product_id")
+  plannedQty       Int       @map("planned_qty")
+  actualQty        Int       @default(0) @map("actual_qty")
+  defectQty        Int       @default(0) @map("defect_qty")
+  wasteQty         Int       @default(0) @map("waste_qty")
+  worker           String?
+  status           String    @default("대기")
+  startedAt        DateTime? @map("started_at")
+  completedAt      DateTime? @map("completed_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  order   Order?  @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("productions")
+}
+
+model Shipment {
+  id             Int      @id @default(autoincrement())
+  shipmentNumber String   @unique @map("shipment_number")
+  orderId        Int      @map("order_id")
+  shipmentDate   DateTime @default(now()) @map("shipment_date") @db.Date
+  status         String   @default("대기")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  order Order          @relation(fields: [orderId], references: [id])
+  items ShipmentItem[]
+
+  @@map("shipments")
+}
+
+model ShipmentItem {
+  id         Int @id @default(autoincrement())
+  shipmentId Int @map("shipment_id")
+  productId  Int @map("product_id")
+  quantity   Int
+
+  shipment Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  product  Product  @relation(fields: [productId], references: [id])
+
+  @@map("shipment_items")
+}
+
+model Setting {
+  key   String @id
+  value String?
+
+  @@map("settings")
+}
+
+model KpiDaily {
+  id              Int      @id @default(autoincrement())
+  date            DateTime @db.Date
+  companyId       Int?     @map("company_id")
+  productId       Int?     @map("product_id")
+  pi              Float    @default(0)
+  qi              Float    @default(0)
+  yieldRate       Float    @default(0) @map("yield_rate")
+  defectRate      Float    @default(0) @map("defect_rate")
+  wasteRate       Float    @default(0) @map("waste_rate")
+  actualQty       Int      @default(0) @map("actual_qty")
+  plannedQty      Int      @default(0) @map("planned_qty")
+  defectQty       Int      @default(0) @map("defect_qty")
+  wasteQty        Int      @default(0) @map("waste_qty")
+  productionCount Int      @default(0) @map("production_count")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  company Company? @relation(fields: [companyId], references: [id])
+  product Product? @relation(fields: [productId], references: [id])
+
+  @@unique([date, companyId, productId])
+  @@map("kpi_daily")
+}
+
+model Company {
+  id          Int      @id @default(autoincrement())
+  companyCode String   @unique @map("company_code")
+  name        String
+  contact     String?
+  address     String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  users    User[]
+  kpiDaily KpiDaily[]
+
+  @@map("companies")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+  role         String   @default("company_admin")
+  companyId    Int?     @map("company_id")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  company  Company?  @relation(fields: [companyId], references: [id])
+  sessions Session[]
+
+  @@map("users")
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model KpiTransmission {
+  id            Int      @id @default(autoincrement())
+  reportDate    DateTime @map("report_date") @db.Date
+  transmittedAt DateTime @default(now()) @map("transmitted_at")
+  status        String   @default("pending")
+  statusCode    Int?     @map("status_code")
+  responseMsg   String?  @map("response_msg")
+  requestData   Json     @map("request_data")
+  responseData  Json?    @map("response_data")
+  attemptCount  Int      @default(1) @map("attempt_count")
+  triggerType   String   @default("manual") @map("trigger_type")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("kpi_transmissions")
+}

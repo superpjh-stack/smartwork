@@ -15,28 +15,58 @@ async function renderDashboard() {
       <!-- 요약 카드 -->
       <div class="dashboard-grid">
         <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon stat-icon--primary">
+              <i data-lucide="package"></i>
+            </div>
+            <span class="stat-label">등록 제품</span>
+          </div>
           <div class="stat-value">${formatNumber(summary.products)}</div>
-          <div class="stat-label">등록 제품</div>
         </div>
         <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon stat-icon--info">
+              <i data-lucide="building-2"></i>
+            </div>
+            <span class="stat-label">거래처</span>
+          </div>
           <div class="stat-value">${formatNumber(summary.customers)}</div>
-          <div class="stat-label">거래처</div>
         </div>
         <div class="stat-card ${summary.pendingOrders > 0 ? 'warning' : ''}">
+          <div class="stat-header">
+            <div class="stat-icon stat-icon--warning">
+              <i data-lucide="clipboard-list"></i>
+            </div>
+            <span class="stat-label">진행중 주문</span>
+          </div>
           <div class="stat-value">${formatNumber(summary.pendingOrders)}</div>
-          <div class="stat-label">진행중 주문</div>
         </div>
         <div class="stat-card ${summary.activeProductions > 0 ? 'success' : ''}">
+          <div class="stat-header">
+            <div class="stat-icon stat-icon--success">
+              <i data-lucide="factory"></i>
+            </div>
+            <span class="stat-label">생산 진행중</span>
+          </div>
           <div class="stat-value">${formatNumber(summary.activeProductions)}</div>
-          <div class="stat-label">생산 진행중</div>
         </div>
         <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon stat-icon--primary">
+              <i data-lucide="truck"></i>
+            </div>
+            <span class="stat-label">오늘 출하 예정</span>
+          </div>
           <div class="stat-value">${formatNumber(summary.todayShipments)}</div>
-          <div class="stat-label">오늘 출하 예정</div>
         </div>
         <div class="stat-card ${summary.lowStock > 0 ? 'danger' : ''}">
+          <div class="stat-header">
+            <div class="stat-icon stat-icon--danger">
+              <i data-lucide="alert-triangle"></i>
+            </div>
+            <span class="stat-label">재고 부족</span>
+          </div>
           <div class="stat-value">${formatNumber(summary.lowStock)}</div>
-          <div class="stat-label">재고 부족</div>
         </div>
       </div>
 
@@ -71,7 +101,7 @@ async function renderDashboard() {
                   </tbody>
                 </table>
               </div>
-            ` : '<div class="empty-state">최근 주문이 없습니다.</div>'}
+            ` : '<div class="empty-state"><p>최근 주문이 없습니다.</p></div>'}
           </div>
         </div>
 
@@ -105,13 +135,13 @@ async function renderDashboard() {
                   </tbody>
                 </table>
               </div>
-            ` : '<div class="empty-state">최근 생산이 없습니다.</div>'}
+            ` : '<div class="empty-state"><p>최근 생산이 없습니다.</p></div>'}
           </div>
         </div>
       </div>
 
       <!-- 재고 현황 -->
-      <div class="card" style="margin-top: 20px;">
+      <div class="card">
         <div class="card-header">
           <h3>재고 현황 (재고 부족 순)</h3>
           <button class="btn btn-sm btn-primary" onclick="navigateTo('inventory')">전체보기</button>
@@ -133,7 +163,7 @@ async function renderDashboard() {
                     <tr>
                       <td>${inv.product_code}</td>
                       <td>${inv.product_name}</td>
-                      <td class="${inv.quantity <= 10 ? 'text-danger' : ''}" style="${inv.quantity <= 10 ? 'color: var(--danger-color); font-weight: bold;' : ''}">
+                      <td style="${inv.quantity <= 10 ? 'color: var(--color-danger); font-weight: bold;' : ''}">
                         ${formatNumber(inv.quantity)}
                       </td>
                       <td>${inv.location || '-'}</td>
@@ -142,12 +172,12 @@ async function renderDashboard() {
                 </tbody>
               </table>
             </div>
-          ` : '<div class="empty-state">등록된 재고가 없습니다.</div>'}
+          ` : '<div class="empty-state"><p>등록된 재고가 없습니다.</p></div>'}
         </div>
       </div>
     `;
   } catch (error) {
-    contentBody.innerHTML = `<div class="empty-state">데이터를 불러오는 중 오류가 발생했습니다.</div>`;
+    contentBody.innerHTML = `<div class="empty-state"><p>데이터를 불러오는 중 오류가 발생했습니다.</p></div>`;
     showToast(error.message, 'error');
   }
 }

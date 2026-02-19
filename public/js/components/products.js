@@ -36,7 +36,7 @@ async function renderProducts() {
                       <td>${product.name}</td>
                       <td>${product.unit}</td>
                       <td>${formatNumber(product.price)}원</td>
-                      <td style="${product.stock_quantity <= 10 ? 'color: var(--danger-color); font-weight: bold;' : ''}">
+                      <td style="${product.stock_quantity <= 10 ? 'color: var(--color-danger); font-weight: bold;' : ''}">
                         ${formatNumber(product.stock_quantity)}
                       </td>
                       <td>${formatDate(product.created_at)}</td>
@@ -51,7 +51,7 @@ async function renderProducts() {
             </div>
           ` : `
             <div class="empty-state">
-              <div class="icon">📦</div>
+              <i data-lucide="package" class="empty-icon"></i>
               <p>등록된 제품이 없습니다.</p>
             </div>
           `}

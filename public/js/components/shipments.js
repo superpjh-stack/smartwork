@@ -69,7 +69,7 @@ async function renderShipments() {
             </div>
           ` : `
             <div class="empty-state">
-              <div class="icon">🚚</div>
+              <i data-lucide="truck" class="empty-icon"></i>
               <p>등록된 출하가 없습니다.</p>
             </div>
           `}
@@ -195,7 +195,7 @@ async function openShipmentModal() {
 
         <h4 style="margin-top: 20px; margin-bottom: 10px;">출하 품목</h4>
         <div id="shipment-items-container">
-          <p style="color: var(--text-light);">주문을 선택하면 품목이 표시됩니다.</p>
+          <p style="color: var(--color-text-secondary);">주문을 선택하면 품목이 표시됩니다.</p>
         </div>
       </form>
     `;
@@ -215,7 +215,7 @@ async function loadOrderItems(orderId) {
   const container = document.getElementById('shipment-items-container');
 
   if (!orderId) {
-    container.innerHTML = '<p style="color: var(--text-light);">주문을 선택하면 품목이 표시됩니다.</p>';
+    container.innerHTML = '<p style="color: var(--color-text-secondary);">주문을 선택하면 품목이 표시됩니다.</p>';
     shipmentItems = [];
     return;
   }
@@ -244,7 +244,7 @@ function renderShipmentItems() {
   const container = document.getElementById('shipment-items-container');
 
   if (shipmentItems.length === 0) {
-    container.innerHTML = '<p style="color: var(--text-light);">품목이 없습니다.</p>';
+    container.innerHTML = '<p style="color: var(--color-text-secondary);">품목이 없습니다.</p>';
     return;
   }
 

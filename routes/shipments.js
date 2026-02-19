@@ -2,81 +2,107 @@ const express = require('express');
 const router = express.Router();
 
 // 출하번호 생성 함수
-function generateShipmentNumber(db) {
-  const prefix = db.prepare("SELECT value FROM settings WHERE key = 'shipment_prefix'").get()?.value || 'SHP';
+async function generateShipmentNumber(prisma) {
+  const prefixSetting = await prisma.setting.findUnique({ where: { key: 'shipment_prefix' } });
+  const prefix = prefixSetting?.value || 'SHP';
   const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-  const count = db.prepare("SELECT COUNT(*) as count FROM shipments WHERE shipment_number LIKE ?").get(`${prefix}${today}%`);
-  const seq = String(count.count + 1).padStart(3, '0');
+  const count = await prisma.shipment.count({
+    where: { shipmentNumber: { startsWith: `${prefix}${today}` } },
+  });
+  const seq = String(count + 1).padStart(3, '0');
   return `${prefix}${today}${seq}`;
 }
 
 // 출하 목록 조회
-router.get('/', (req, res) => {
-  const db = req.app.locals.db;
+router.get('/', async (req, res) => {
+  const prisma = req.app.locals.prisma;
   const { status, order_id } = req.query;
 
   try {
-    let sql = `
-      SELECT s.*, o.order_number, c.name as customer_name
-      FROM shipments s
-      LEFT JOIN orders o ON s.order_id = o.id
-      LEFT JOIN customers c ON o.customer_id = c.id
-      WHERE 1=1
-    `;
-    const params = [];
+    const where = {};
+    if (status) where.status = status;
+    if (order_id) where.orderId = parseInt(order_id);
 
-    if (status) {
-      sql += ' AND s.status = ?';
-      params.push(status);
-    }
-    if (order_id) {
-      sql += ' AND s.order_id = ?';
-      params.push(order_id);
-    }
+    const shipments = await prisma.shipment.findMany({
+      where,
+      include: {
+        order: {
+          select: { orderNumber: true, customer: { select: { name: true } } },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
 
-    sql += ' ORDER BY s.created_at DESC';
-
-    const shipments = db.prepare(sql).all(...params);
-    res.json(shipments);
+    res.json(shipments.map(s => ({
+      id: s.id,
+      shipment_number: s.shipmentNumber,
+      order_id: s.orderId,
+      shipment_date: s.shipmentDate,
+      status: s.status,
+      created_at: s.createdAt,
+      order_number: s.order?.orderNumber ?? null,
+      customer_name: s.order?.customer?.name ?? null,
+    })));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // 출하 상세 조회
-router.get('/:id', (req, res) => {
-  const db = req.app.locals.db;
+router.get('/:id', async (req, res) => {
+  const prisma = req.app.locals.prisma;
 
   try {
-    const shipment = db.prepare(`
-      SELECT s.*, o.order_number, o.due_date, c.name as customer_name, c.contact, c.address
-      FROM shipments s
-      LEFT JOIN orders o ON s.order_id = o.id
-      LEFT JOIN customers c ON o.customer_id = c.id
-      WHERE s.id = ?
-    `).get(req.params.id);
+    const shipment = await prisma.shipment.findUnique({
+      where: { id: parseInt(req.params.id) },
+      include: {
+        order: {
+          select: {
+            orderNumber: true,
+            dueDate: true,
+            customer: { select: { name: true, contact: true, address: true } },
+          },
+        },
+        items: {
+          include: { product: { select: { productCode: true, name: true, unit: true } } },
+        },
+      },
+    });
 
     if (!shipment) {
       return res.status(404).json({ error: '출하 정보를 찾을 수 없습니다.' });
     }
 
-    // 출하 상세 품목
-    const items = db.prepare(`
-      SELECT si.*, p.product_code, p.name as product_name, p.unit
-      FROM shipment_items si
-      JOIN products p ON si.product_id = p.id
-      WHERE si.shipment_id = ?
-    `).all(req.params.id);
-
-    res.json({ ...shipment, items });
+    res.json({
+      id: shipment.id,
+      shipment_number: shipment.shipmentNumber,
+      order_id: shipment.orderId,
+      shipment_date: shipment.shipmentDate,
+      status: shipment.status,
+      created_at: shipment.createdAt,
+      order_number: shipment.order?.orderNumber ?? null,
+      due_date: shipment.order?.dueDate ?? null,
+      customer_name: shipment.order?.customer?.name ?? null,
+      contact: shipment.order?.customer?.contact ?? null,
+      address: shipment.order?.customer?.address ?? null,
+      items: shipment.items.map(i => ({
+        id: i.id,
+        shipment_id: i.shipmentId,
+        product_id: i.productId,
+        quantity: i.quantity,
+        product_code: i.product.productCode,
+        product_name: i.product.name,
+        unit: i.product.unit,
+      })),
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // 출하 등록
-router.post('/', (req, res) => {
-  const db = req.app.locals.db;
+router.post('/', async (req, res) => {
+  const prisma = req.app.locals.prisma;
   const { order_id, shipment_date, items } = req.body;
 
   if (!order_id || !items || items.length === 0) {
@@ -86,33 +112,33 @@ router.post('/', (req, res) => {
   try {
     // 재고 확인
     for (const item of items) {
-      const inventory = db.prepare('SELECT quantity FROM inventory WHERE product_id = ?').get(item.product_id);
+      const inventory = await prisma.inventory.findUnique({ where: { productId: item.product_id } });
       if (!inventory || inventory.quantity < item.quantity) {
-        const product = db.prepare('SELECT name FROM products WHERE id = ?').get(item.product_id);
+        const product = await prisma.product.findUnique({ where: { id: item.product_id } });
         return res.status(400).json({ error: `${product?.name || '제품'} 재고가 부족합니다.` });
       }
     }
 
-    const shipmentNumber = generateShipmentNumber(db);
+    const shipmentNumber = await generateShipmentNumber(prisma);
 
-    // 출하 생성
-    const shipmentStmt = db.prepare(`
-      INSERT INTO shipments (shipment_number, order_id, shipment_date)
-      VALUES (?, ?, ?)
-    `);
-    const shipmentResult = shipmentStmt.run(shipmentNumber, order_id, shipment_date || new Date().toISOString().slice(0, 10));
-    const shipmentId = shipmentResult.lastInsertRowid;
-
-    // 출하 상세 품목 등록
-    const itemStmt = db.prepare('INSERT INTO shipment_items (shipment_id, product_id, quantity) VALUES (?, ?, ?)');
-    items.forEach(item => {
-      itemStmt.run(shipmentId, item.product_id, item.quantity);
+    const shipment = await prisma.shipment.create({
+      data: {
+        shipmentNumber,
+        orderId: order_id,
+        shipmentDate: shipment_date ? new Date(shipment_date) : new Date(),
+        items: {
+          create: items.map(item => ({
+            productId: item.product_id,
+            quantity: item.quantity,
+          })),
+        },
+      },
     });
 
     res.status(201).json({
-      id: shipmentId,
+      id: shipment.id,
       shipment_number: shipmentNumber,
-      message: '출하가 등록되었습니다.'
+      message: '출하가 등록되었습니다.',
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -120,11 +146,15 @@ router.post('/', (req, res) => {
 });
 
 // 출하 완료
-router.patch('/:id/complete', (req, res) => {
-  const db = req.app.locals.db;
+router.patch('/:id/complete', async (req, res) => {
+  const prisma = req.app.locals.prisma;
+  const shipmentId = parseInt(req.params.id);
 
   try {
-    const shipment = db.prepare('SELECT * FROM shipments WHERE id = ?').get(req.params.id);
+    const shipment = await prisma.shipment.findUnique({
+      where: { id: shipmentId },
+      include: { items: true },
+    });
 
     if (!shipment) {
       return res.status(404).json({ error: '출하 정보를 찾을 수 없습니다.' });
@@ -134,47 +164,63 @@ router.patch('/:id/complete', (req, res) => {
       return res.status(400).json({ error: '이미 완료된 출하입니다.' });
     }
 
-    // 출하 품목 조회
-    const items = db.prepare('SELECT * FROM shipment_items WHERE shipment_id = ?').all(req.params.id);
-
-    // 재고 차감 및 이력 기록
-    for (const item of items) {
-      const inventory = db.prepare('SELECT quantity FROM inventory WHERE product_id = ?').get(item.product_id);
+    // 재고 확인
+    for (const item of shipment.items) {
+      const inventory = await prisma.inventory.findUnique({ where: { productId: item.productId } });
       if (!inventory || inventory.quantity < item.quantity) {
-        const product = db.prepare('SELECT name FROM products WHERE id = ?').get(item.product_id);
+        const product = await prisma.product.findUnique({ where: { id: item.productId } });
         return res.status(400).json({ error: `${product?.name || '제품'} 재고가 부족합니다.` });
       }
-
-      db.prepare('UPDATE inventory SET quantity = quantity - ?, updated_at = CURRENT_TIMESTAMP WHERE product_id = ?')
-        .run(item.quantity, item.product_id);
-
-      db.prepare('INSERT INTO inventory_history (product_id, change_type, quantity, reason) VALUES (?, ?, ?, ?)')
-        .run(item.product_id, '출고', -item.quantity, `출하 완료 (${shipment.shipment_number})`);
     }
 
-    // 출하 상태 변경
-    db.prepare("UPDATE shipments SET status = '완료' WHERE id = ?").run(req.params.id);
+    await prisma.$transaction(async (tx) => {
+      // 재고 차감 및 이력 기록
+      for (const item of shipment.items) {
+        await tx.inventory.update({
+          where: { productId: item.productId },
+          data: { quantity: { decrement: item.quantity }, updatedAt: new Date() },
+        });
 
-    // 주문의 모든 품목이 출하되었는지 확인하고 주문 상태 변경
-    const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(shipment.order_id);
-    if (order) {
-      const orderItems = db.prepare('SELECT product_id, quantity FROM order_items WHERE order_id = ?').all(order.id);
-      const shippedItems = db.prepare(`
-        SELECT si.product_id, SUM(si.quantity) as shipped_qty
+        await tx.inventoryHistory.create({
+          data: {
+            productId: item.productId,
+            changeType: '출고',
+            quantity: -item.quantity,
+            reason: `출하 완료 (${shipment.shipmentNumber})`,
+          },
+        });
+      }
+
+      // 출하 상태 변경
+      await tx.shipment.update({
+        where: { id: shipmentId },
+        data: { status: '완료' },
+      });
+
+      // 주문의 모든 품목이 출하되었는지 확인
+      const orderItems = await tx.orderItem.findMany({
+        where: { orderId: shipment.orderId },
+      });
+
+      const shippedItems = await tx.$queryRawUnsafe(`
+        SELECT si.product_id, SUM(si.quantity)::int as shipped_qty
         FROM shipment_items si
         JOIN shipments s ON si.shipment_id = s.id
-        WHERE s.order_id = ? AND s.status = '완료'
+        WHERE s.order_id = $1 AND s.status = '완료'
         GROUP BY si.product_id
-      `).all(order.id);
+      `, shipment.orderId);
 
       const shippedMap = {};
       shippedItems.forEach(s => shippedMap[s.product_id] = s.shipped_qty);
 
-      const allShipped = orderItems.every(oi => (shippedMap[oi.product_id] || 0) >= oi.quantity);
+      const allShipped = orderItems.every(oi => (shippedMap[oi.productId] || 0) >= oi.quantity);
       if (allShipped) {
-        db.prepare("UPDATE orders SET status = '완료' WHERE id = ?").run(order.id);
+        await tx.order.update({
+          where: { id: shipment.orderId },
+          data: { status: '완료' },
+        });
       }
-    }
+    });
 
     res.json({ message: '출하가 완료되었습니다.' });
   } catch (error) {
@@ -183,11 +229,11 @@ router.patch('/:id/complete', (req, res) => {
 });
 
 // 출하 취소
-router.patch('/:id/cancel', (req, res) => {
-  const db = req.app.locals.db;
+router.patch('/:id/cancel', async (req, res) => {
+  const prisma = req.app.locals.prisma;
 
   try {
-    const shipment = db.prepare('SELECT * FROM shipments WHERE id = ?').get(req.params.id);
+    const shipment = await prisma.shipment.findUnique({ where: { id: parseInt(req.params.id) } });
 
     if (!shipment) {
       return res.status(404).json({ error: '출하 정보를 찾을 수 없습니다.' });
@@ -197,7 +243,10 @@ router.patch('/:id/cancel', (req, res) => {
       return res.status(400).json({ error: '완료된 출하는 취소할 수 없습니다.' });
     }
 
-    db.prepare("UPDATE shipments SET status = '취소' WHERE id = ?").run(req.params.id);
+    await prisma.shipment.update({
+      where: { id: parseInt(req.params.id) },
+      data: { status: '취소' },
+    });
 
     res.json({ message: '출하가 취소되었습니다.' });
   } catch (error) {
@@ -206,11 +255,12 @@ router.patch('/:id/cancel', (req, res) => {
 });
 
 // 출하 삭제
-router.delete('/:id', (req, res) => {
-  const db = req.app.locals.db;
+router.delete('/:id', async (req, res) => {
+  const prisma = req.app.locals.prisma;
+  const shipmentId = parseInt(req.params.id);
 
   try {
-    const shipment = db.prepare('SELECT * FROM shipments WHERE id = ?').get(req.params.id);
+    const shipment = await prisma.shipment.findUnique({ where: { id: shipmentId } });
 
     if (!shipment) {
       return res.status(404).json({ error: '출하 정보를 찾을 수 없습니다.' });
@@ -220,7 +270,7 @@ router.delete('/:id', (req, res) => {
       return res.status(400).json({ error: '완료된 출하는 삭제할 수 없습니다.' });
     }
 
-    db.prepare('DELETE FROM shipments WHERE id = ?').run(req.params.id);
+    await prisma.shipment.delete({ where: { id: shipmentId } });
     res.json({ message: '출하가 삭제되었습니다.' });
   } catch (error) {
     res.status(500).json({ error: error.message });

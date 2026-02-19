@@ -215,7 +215,7 @@ async function renderSalesReport() {
                         <td>${totalSales > 0 ? ((c.total_sales / totalSales) * 100).toFixed(1) : 0}%</td>
                       </tr>
                     `).join('')}
-                    <tr style="font-weight: bold; background-color: #f8f9fa;">
+                    <tr style="font-weight: bold; background-color: var(--color-gray-50);">
                       <td colspan="2">합계</td>
                       <td>${formatNumber(totalSales)}원</td>
                       <td>100%</td>

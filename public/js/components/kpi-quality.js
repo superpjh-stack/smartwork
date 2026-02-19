@@ -89,7 +89,7 @@ async function renderKpiQuality() {
 
     loadQualityData();
   } catch (error) {
-    container.innerHTML = `<div class="empty-state"><div class="icon">!</div><p>데이터 로드 실패: ${error.message}</p></div>`;
+    container.innerHTML = `<div class="empty-state"><i data-lucide="alert-circle" class="empty-icon"></i><p>데이터 로드 실패: ${error.message}</p></div>`;
   }
 }
 
@@ -142,7 +142,7 @@ async function loadQualityData() {
     // 일별 테이블
     const dailyBody = document.getElementById('kpi-qual-daily-body');
     if (data.daily.length === 0) {
-      dailyBody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#7f8c8d;">데이터가 없습니다.</td></tr>';
+      dailyBody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--color-text-secondary);">데이터가 없습니다.</td></tr>';
     } else {
       dailyBody.innerHTML = data.daily.map(d => {
         return `
@@ -164,7 +164,7 @@ async function loadQualityData() {
     // 제품별 테이블
     const productBody = document.getElementById('kpi-qual-product-body');
     if (data.byProduct.length === 0) {
-      productBody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#7f8c8d;">데이터가 없습니다.</td></tr>';
+      productBody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--color-text-secondary);">데이터가 없습니다.</td></tr>';
     } else {
       productBody.innerHTML = data.byProduct.map(p => {
         return `
