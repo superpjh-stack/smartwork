@@ -1,0 +1,455 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2026-02-19T04:20:37.974Z",
+  "activeFeatures": [
+    "routes",
+    "prisma",
+    "js",
+    "kpi-external-api",
+    "smartwork"
+  ],
+  "primaryFeature": "kpi-external-api",
+  "features": {
+    "smartwork": {
+      "phase": "do",
+      "matchRate": 96,
+      "iterationCount": 0,
+      "startedAt": "2026-02-19T00:41:31.832Z",
+      "archivedAt": "2026-02-19T14:30:00.000Z",
+      "archivedTo": "docs/archive/2026-02/smartwork/",
+      "phaseNumber": 3,
+      "lastFile": "C:\\gerardo\\01 SmallSF\\smartwork\\server.js",
+      "timestamps": {
+        "lastUpdated": "2026-02-19T04:13:32.843Z"
+      }
+    },
+    "routes": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-19T00:42:23.367Z",
+        "lastUpdated": "2026-02-19T04:13:03.543Z"
+      },
+      "lastFile": "C:\\gerardo\\01 SmallSF\\smartwork\\routes\\kpi-external.js"
+    },
+    "ui-modernization": {
+      "phase": "archived",
+      "matchRate": 92,
+      "iterationCount": 0,
+      "startedAt": "2026-02-19T12:00:00.000Z",
+      "archivedAt": "2026-02-19T15:00:00.000Z",
+      "archivedTo": "docs/archive/2026-02/ui-modernization/"
+    },
+    "prisma": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-19T00:48:28.890Z",
+        "lastUpdated": "2026-02-19T04:11:49.832Z"
+      },
+      "lastFile": "C:\\gerardo\\01 SmallSF\\smartwork\\prisma\\seed.js"
+    },
+    "js": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-19T01:17:31.626Z",
+        "lastUpdated": "2026-02-19T04:14:55.516Z"
+      },
+      "lastFile": "C:\\gerardo\\01 SmallSF\\smartwork\\public\\js\\components\\settings.js"
+    },
+    "kpi-external-api": {
+      "phase": "completed",
+      "phaseNumber": 5,
+      "matchRate": 98,
+      "iterationCount": 0,
+      "requirements": [
+        "FR-01",
+        "FR-02",
+        "FR-03",
+        "FR-04",
+        "FR-05",
+        "FR-06",
+        "FR-07"
+      ],
+      "documents": {
+        "plan": "docs/01-plan/features/kpi-external-api.plan.md",
+        "design": "docs/02-design/features/kpi-external-api.design.md",
+        "analysis": "docs/03-analysis/kpi-external-api.analysis.md",
+        "report": "docs/04-report/features/kpi-external-api.report.md"
+      },
+      "timestamps": {
+        "started": "2026-02-19T16:00:00.000Z",
+        "lastUpdated": "2026-02-19T17:30:00.000Z"
+      }
+    }
+  },
+  "pipeline": {
+    "currentPhase": 1,
+    "level": "Dynamic",
+    "phaseHistory": []
+  },
+  "session": {
+    "startedAt": "2026-02-19T00:13:10.319Z",
+    "onboardingCompleted": false,
+    "lastActivity": "2026-02-19T04:20:37.974Z"
+  },
+  "history": [
+    {
+      "timestamp": "2026-02-19T00:41:31.833Z",
+      "feature": "smartwork",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:41:57.540Z",
+      "feature": "smartwork",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:42:23.367Z",
+      "feature": "routes",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:42:37.280Z",
+      "feature": "routes",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:42:53.502Z",
+      "feature": "routes",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:43:12.098Z",
+      "feature": "routes",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:43:36.803Z",
+      "feature": "routes",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:44:03.511Z",
+      "feature": "routes",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:44:33.897Z",
+      "feature": "routes",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:45:07.395Z",
+      "feature": "routes",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:45:38.442Z",
+      "feature": "routes",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:45:56.013Z",
+      "feature": "routes",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:46:52.083Z",
+      "feature": "routes",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:47:24.793Z",
+      "feature": "routes",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T00:48:28.890Z",
+      "feature": "prisma",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T12:30:00.000Z",
+      "feature": "smartwork",
+      "phase": "check",
+      "action": "gap-analysis-completed",
+      "matchRate": 96
+    },
+    {
+      "timestamp": "2026-02-19T14:00:00.000Z",
+      "feature": "smartwork",
+      "phase": "completed",
+      "action": "report-generated",
+      "matchRate": 96
+    },
+    {
+      "timestamp": "2026-02-19T01:17:31.626Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:17:58.094Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:18:17.542Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:18:19.748Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:18.432Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:20.025Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:21.627Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:23.224Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:24.939Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:26.541Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:28.308Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:29.879Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:31.546Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:33.203Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:34.884Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:36.609Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:38.370Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:39.989Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:41.642Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:43.323Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:44.938Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:20:46.657Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:21:08.059Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:21:09.571Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T01:21:26.314Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T14:30:00.000Z",
+      "feature": "smartwork",
+      "phase": "archived",
+      "action": "archived-with-summary"
+    },
+    {
+      "timestamp": "2026-02-19T15:00:00.000Z",
+      "feature": "ui-modernization",
+      "phase": "archived",
+      "action": "archived-with-summary"
+    },
+    {
+      "timestamp": "2026-02-19T16:00:00.000Z",
+      "feature": "kpi-external-api",
+      "phase": "plan",
+      "action": "plan-created"
+    },
+    {
+      "timestamp": "2026-02-19T16:30:00.000Z",
+      "feature": "kpi-external-api",
+      "phase": "design",
+      "action": "design-created"
+    },
+    {
+      "timestamp": "2026-02-19T04:11:49.832Z",
+      "feature": "prisma",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T04:12:30.581Z",
+      "feature": "smartwork",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T04:12:38.294Z",
+      "feature": "smartwork",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T04:13:03.543Z",
+      "feature": "routes",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T04:13:16.382Z",
+      "feature": "smartwork",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T04:13:21.570Z",
+      "feature": "smartwork",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T04:13:27.226Z",
+      "feature": "smartwork",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T04:13:32.843Z",
+      "feature": "smartwork",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T04:13:46.218Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T04:14:55.516Z",
+      "feature": "js",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-19T04:20:37.974Z",
+      "feature": "kpi-external-api",
+      "phase": "report",
+      "action": "updated"
+    }
+  ]
+}
