@@ -48,12 +48,12 @@ async function renderProductions() {
                 <tbody>
                   ${productions.map(prod => `
                     <tr>
-                      <td>${prod.production_number}</td>
-                      <td>${prod.product_name || '-'}</td>
-                      <td>${prod.order_number || '-'}</td>
+                      <td>${escapeHtml(prod.production_number)}</td>
+                      <td>${escapeHtml(prod.product_name || '-')}</td>
+                      <td>${escapeHtml(prod.order_number || '-')}</td>
                       <td>${formatNumber(prod.planned_qty)} / ${formatNumber(prod.actual_qty)}</td>
                       <td>${formatNumber(prod.defect_qty)} / ${formatNumber(prod.waste_qty)}</td>
-                      <td>${prod.worker || '-'}</td>
+                      <td>${escapeHtml(prod.worker || '-')}</td>
                       <td>${getStatusBadge(prod.status)}</td>
                       <td class="action-btns">
                         <button class="btn btn-sm btn-primary" onclick="viewProduction(${prod.id})">상세</button>
@@ -103,7 +103,7 @@ async function viewProduction(id) {
       <div class="detail-grid">
         <div class="detail-item">
           <label>생산번호</label>
-          <div class="value">${prod.production_number}</div>
+          <div class="value">${escapeHtml(prod.production_number)}</div>
         </div>
         <div class="detail-item">
           <label>상태</label>
@@ -111,19 +111,19 @@ async function viewProduction(id) {
         </div>
         <div class="detail-item">
           <label>제품</label>
-          <div class="value">${prod.product_code} - ${prod.product_name}</div>
+          <div class="value">${escapeHtml(prod.product_code)} - ${escapeHtml(prod.product_name)}</div>
         </div>
         <div class="detail-item">
           <label>단위</label>
-          <div class="value">${prod.unit || '-'}</div>
+          <div class="value">${escapeHtml(prod.unit || '-')}</div>
         </div>
         <div class="detail-item">
           <label>주문번호</label>
-          <div class="value">${prod.order_number || '-'}</div>
+          <div class="value">${escapeHtml(prod.order_number || '-')}</div>
         </div>
         <div class="detail-item">
           <label>작업자</label>
-          <div class="value">${prod.worker || '-'}</div>
+          <div class="value">${escapeHtml(prod.worker || '-')}</div>
         </div>
         <div class="detail-item">
           <label>계획 수량</label>
@@ -187,14 +187,14 @@ async function openProductionModal(id = null) {
           <label>제품 *</label>
           <select id="production-product" class="form-control" required>
             <option value="">선택하세요</option>
-            ${products.map(p => `<option value="${p.id}" ${production.product_id == p.id ? 'selected' : ''}>${p.product_code} - ${p.name}</option>`).join('')}
+            ${products.map(p => `<option value="${p.id}" ${production.product_id == p.id ? 'selected' : ''}>${escapeHtml(p.product_code)} - ${escapeHtml(p.name)}</option>`).join('')}
           </select>
         </div>
         <div class="form-group">
           <label>연결 주문 (선택)</label>
           <select id="production-order" class="form-control">
             <option value="">선택안함</option>
-            ${orders.map(o => `<option value="${o.id}" ${production.order_id == o.id ? 'selected' : ''}>${o.order_number} - ${o.customer_name || ''}</option>`).join('')}
+            ${orders.map(o => `<option value="${o.id}" ${production.order_id == o.id ? 'selected' : ''}>${escapeHtml(o.order_number)} - ${escapeHtml(o.customer_name || '')}</option>`).join('')}
           </select>
         </div>
         <div class="form-row">
@@ -204,7 +204,7 @@ async function openProductionModal(id = null) {
           </div>
           <div class="form-group">
             <label>작업자</label>
-            <input type="text" id="production-worker" class="form-control" value="${production.worker || ''}" placeholder="작업자명">
+            <input type="text" id="production-worker" class="form-control" value="${escapeHtml(production.worker || '')}" placeholder="작업자명">
           </div>
         </div>
       </form>
@@ -273,11 +273,11 @@ async function openCompleteProductionModal(id) {
         <input type="hidden" id="complete-id" value="${id}">
         <div class="detail-item" style="margin-bottom: 15px;">
           <label>생산번호</label>
-          <div class="value">${prod.production_number}</div>
+          <div class="value">${escapeHtml(prod.production_number)}</div>
         </div>
         <div class="detail-item" style="margin-bottom: 15px;">
           <label>제품</label>
-          <div class="value">${prod.product_code} - ${prod.product_name}</div>
+          <div class="value">${escapeHtml(prod.product_code)} - ${escapeHtml(prod.product_name)}</div>
         </div>
         <div class="detail-item" style="margin-bottom: 15px;">
           <label>계획 수량</label>

@@ -1,12 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
-const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
-function hashPassword(password) {
-  const salt = crypto.randomBytes(16).toString('hex');
-  const hash = crypto.createHash('sha256').update(password + salt).digest('hex');
-  return salt + ':' + hash;
+async function hashPassword(password) {
+  return bcrypt.hash(password, 12);
 }
 
 async function main() {
@@ -68,7 +66,7 @@ async function main() {
     await prisma.user.create({
       data: {
         username: 'admin',
-        passwordHash: hashPassword('admin1234'),
+        passwordHash: await hashPassword('admin1234'),
         name: '전체관리자',
         role: 'super_admin',
         companyId: company.id,
@@ -79,7 +77,7 @@ async function main() {
     await prisma.user.create({
       data: {
         username: 'user1',
-        passwordHash: hashPassword('user1234'),
+        passwordHash: await hashPassword('user1234'),
         name: '회사관리자',
         role: 'company_admin',
         companyId: company.id,

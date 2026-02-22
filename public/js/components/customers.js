@@ -31,10 +31,10 @@ async function renderCustomers() {
                 <tbody>
                   ${customers.map(customer => `
                     <tr>
-                      <td>${customer.customer_code}</td>
-                      <td>${customer.name}</td>
-                      <td>${customer.contact || '-'}</td>
-                      <td>${customer.address || '-'}</td>
+                      <td>${escapeHtml(customer.customer_code)}</td>
+                      <td>${escapeHtml(customer.name)}</td>
+                      <td>${escapeHtml(customer.contact || '-')}</td>
+                      <td>${escapeHtml(customer.address || '-')}</td>
                       <td>${formatDate(customer.created_at)}</td>
                       <td class="action-btns">
                         <button class="btn btn-sm btn-primary" onclick="viewCustomer(${customer.id})">상세</button>
@@ -70,15 +70,15 @@ async function viewCustomer(id) {
       <div class="detail-grid">
         <div class="detail-item">
           <label>거래처코드</label>
-          <div class="value">${customer.customer_code}</div>
+          <div class="value">${escapeHtml(customer.customer_code)}</div>
         </div>
         <div class="detail-item">
           <label>거래처명</label>
-          <div class="value">${customer.name}</div>
+          <div class="value">${escapeHtml(customer.name)}</div>
         </div>
         <div class="detail-item">
           <label>연락처</label>
-          <div class="value">${customer.contact || '-'}</div>
+          <div class="value">${escapeHtml(customer.contact || '-')}</div>
         </div>
         <div class="detail-item">
           <label>등록일</label>
@@ -87,7 +87,7 @@ async function viewCustomer(id) {
       </div>
       <div class="detail-item" style="margin-top: 15px;">
         <label>주소</label>
-        <div class="value">${customer.address || '-'}</div>
+        <div class="value">${escapeHtml(customer.address || '-')}</div>
       </div>
 
       ${customer.orders && customer.orders.length > 0 ? `
@@ -104,7 +104,7 @@ async function viewCustomer(id) {
           <tbody>
             ${customer.orders.map(order => `
               <tr>
-                <td>${order.order_number}</td>
+                <td>${escapeHtml(order.order_number)}</td>
                 <td>${formatDate(order.order_date)}</td>
                 <td>${getStatusBadge(order.status)}</td>
                 <td>${formatNumber(order.total_amount)}원</td>
@@ -143,20 +143,20 @@ async function openCustomerModal(id = null) {
       <div class="form-row">
         <div class="form-group">
           <label for="customer-code">거래처코드 *</label>
-          <input type="text" id="customer-code" class="form-control" value="${customer.customer_code}" required>
+          <input type="text" id="customer-code" class="form-control" value="${escapeHtml(customer.customer_code)}" required>
         </div>
         <div class="form-group">
           <label for="customer-name">거래처명 *</label>
-          <input type="text" id="customer-name" class="form-control" value="${customer.name}" required>
+          <input type="text" id="customer-name" class="form-control" value="${escapeHtml(customer.name)}" required>
         </div>
       </div>
       <div class="form-group">
         <label for="customer-contact">연락처</label>
-        <input type="text" id="customer-contact" class="form-control" value="${customer.contact || ''}" placeholder="예: 02-1234-5678">
+        <input type="text" id="customer-contact" class="form-control" value="${escapeHtml(customer.contact || '')}" placeholder="예: 02-1234-5678">
       </div>
       <div class="form-group">
         <label for="customer-address">주소</label>
-        <textarea id="customer-address" class="form-control" rows="2" placeholder="주소를 입력하세요">${customer.address || ''}</textarea>
+        <textarea id="customer-address" class="form-control" rows="2" placeholder="주소를 입력하세요">${escapeHtml(customer.address || '')}</textarea>
       </div>
     </form>
   `;

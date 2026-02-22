@@ -36,10 +36,10 @@ async function renderUsers() {
                 <tbody>
                   ${users.map(user => `
                     <tr>
-                      <td>${user.username}</td>
-                      <td>${user.name}</td>
+                      <td>${escapeHtml(user.username)}</td>
+                      <td>${escapeHtml(user.name)}</td>
                       <td>${getRoleBadge(user.role)}</td>
-                      <td>${user.company_name || '-'}</td>
+                      <td>${escapeHtml(user.company_name || '-')}</td>
                       <td>${user.is_active ? '<span class="badge badge-success">활성</span>' : '<span class="badge badge-secondary">비활성</span>'}</td>
                       <td>${formatDate(user.created_at)}</td>
                       <td class="action-btns">
@@ -86,11 +86,11 @@ async function viewUser(id) {
       <div class="detail-grid">
         <div class="detail-item">
           <label>아이디</label>
-          <div class="value">${user.username}</div>
+          <div class="value">${escapeHtml(user.username)}</div>
         </div>
         <div class="detail-item">
           <label>이름</label>
-          <div class="value">${user.name}</div>
+          <div class="value">${escapeHtml(user.name)}</div>
         </div>
         <div class="detail-item">
           <label>역할</label>
@@ -98,7 +98,7 @@ async function viewUser(id) {
         </div>
         <div class="detail-item">
           <label>소속 회사</label>
-          <div class="value">${user.company_name || '-'}</div>
+          <div class="value">${escapeHtml(user.company_name || '-')}</div>
         </div>
         <div class="detail-item">
           <label>상태</label>
@@ -151,11 +151,11 @@ async function openUserModal(id = null) {
       <div class="form-row">
         <div class="form-group">
           <label for="user-username">아이디 *</label>
-          <input type="text" id="user-username" class="form-control" value="${user.username}" ${!isSuperAdmin && id ? 'readonly' : ''} required>
+          <input type="text" id="user-username" class="form-control" value="${escapeHtml(user.username)}" ${!isSuperAdmin && id ? 'readonly' : ''} required>
         </div>
         <div class="form-group">
           <label for="user-name">이름 *</label>
-          <input type="text" id="user-name" class="form-control" value="${user.name}" required>
+          <input type="text" id="user-name" class="form-control" value="${escapeHtml(user.name)}" required>
         </div>
       </div>
       <div class="form-group">
@@ -175,7 +175,7 @@ async function openUserModal(id = null) {
             <label for="user-company">소속 회사</label>
             <select id="user-company" class="form-control">
               <option value="">없음</option>
-              ${companies.map(c => `<option value="${c.id}" ${user.company_id == c.id ? 'selected' : ''}>${c.name} (${c.company_code})</option>`).join('')}
+              ${companies.map(c => `<option value="${c.id}" ${user.company_id == c.id ? 'selected' : ''}>${escapeHtml(c.name)} (${escapeHtml(c.company_code)})</option>`).join('')}
             </select>
           </div>
         </div>

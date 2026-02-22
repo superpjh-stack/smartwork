@@ -1,9 +1,14 @@
 const express = require('express');
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const router = express.Router();
 
-// 비밀번호 검증
-function verifyPassword(password, storedHash) {
+// 비밀번호 검증 (bcrypt 우선, SHA-256 레거시 폴백)
+async function verifyPassword(password, storedHash) {
+  if (storedHash.startsWith('$2a$') || storedHash.startsWith('$2b$')) {
+    return bcrypt.compare(password, storedHash);
+  }
+  // 레거시 SHA-256 검증
   const [salt, hash] = storedHash.split(':');
   const inputHash = crypto.createHash('sha256').update(password + salt).digest('hex');
   return inputHash === hash;
@@ -31,11 +36,18 @@ router.post('/login', async (req, res) => {
     }
 
     if (!user.isActive) {
-      return res.status(401).json({ error: '비활성화된 계정입니다.' });
+      return res.status(403).json({ error: '비활성화된 계정입니다.' });
     }
 
-    if (!verifyPassword(password, user.passwordHash)) {
+    const passwordMatch = await verifyPassword(password, user.passwordHash);
+    if (!passwordMatch) {
       return res.status(401).json({ error: '아이디 또는 비밀번호가 올바르지 않습니다.' });
+    }
+
+    // 레거시 SHA-256 해시 → bcrypt 자동 마이그레이션
+    if (!user.passwordHash.startsWith('$2a$') && !user.passwordHash.startsWith('$2b$')) {
+      const newHash = await bcrypt.hash(password, 12);
+      await prisma.user.update({ where: { id: user.id }, data: { passwordHash: newHash } });
     }
 
     // 기존 세션 정리 (해당 유저)
@@ -70,7 +82,8 @@ router.post('/login', async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -112,7 +125,7 @@ router.get('/me', async (req, res) => {
     }
 
     if (!session.user.isActive) {
-      return res.status(401).json({ error: '비활성화된 계정입니다.' });
+      return res.status(403).json({ error: '비활성화된 계정입니다.' });
     }
 
     const company = session.user.companyId
@@ -133,7 +146,8 @@ router.get('/me', async (req, res) => {
         : null,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 

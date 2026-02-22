@@ -1,3 +1,14 @@
+// XSS 방어 유틸
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // 메인 앱 로직
 let currentPage = 'dashboard';
 let currentUser = null;
@@ -79,7 +90,7 @@ function showAppScreen(user) {
   const userInfoEl = document.getElementById('user-info');
   if (userInfoEl) {
     userInfoEl.innerHTML = `
-      <span class="user-name">${user.name} (${user.role === 'super_admin' ? '전체관리자' : '회사관리자'})</span>
+      <span class="user-name">${escapeHtml(user.name)} (${user.role === 'super_admin' ? '전체관리자' : '회사관리자'})</span>
       <button class="btn btn-sm btn-secondary" onclick="handleLogout()">로그아웃</button>
     `;
   }
@@ -206,7 +217,7 @@ function showToast(message, type = 'info') {
   toast.className = `toast ${type}`;
   toast.innerHTML = `
     <i data-lucide="${icons[type] || 'info'}" style="width:20px;height:20px;flex-shrink:0;"></i>
-    <span>${message}</span>
+    <span>${escapeHtml(message)}</span>
   `;
   container.appendChild(toast);
   if (window.lucide) lucide.createIcons({ nodes: [toast] });
@@ -241,7 +252,7 @@ function getStatusBadge(status) {
     '취소': 'danger',
     '중단': 'warning',
   };
-  return `<span class="badge badge-${statusColors[status] || 'secondary'}">${status}</span>`;
+  return `<span class="badge badge-${escapeHtml(statusColors[status] || 'secondary')}">${escapeHtml(status)}</span>`;
 }
 
 // 사이드바 토글

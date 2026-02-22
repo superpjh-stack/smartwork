@@ -23,7 +23,8 @@ router.get('/', async (req, res) => {
 
     res.json(result);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -52,7 +53,8 @@ router.get('/:id', async (req, res) => {
       location: product.inventory?.location ?? null,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -84,7 +86,8 @@ router.post('/', async (req, res) => {
     if (error.code === 'P2002') {
       return res.status(400).json({ error: '이미 존재하는 제품코드입니다.' });
     }
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -107,7 +110,8 @@ router.put('/:id', async (req, res) => {
     if (error.code === 'P2002') {
       return res.status(400).json({ error: '이미 존재하는 제품코드입니다.' });
     }
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -122,7 +126,8 @@ router.delete('/:id', async (req, res) => {
     if (error.code === 'P2025') {
       return res.status(404).json({ error: '제품을 찾을 수 없습니다.' });
     }
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 

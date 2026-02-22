@@ -46,9 +46,9 @@ async function renderShipments() {
                 <tbody>
                   ${shipments.map(ship => `
                     <tr>
-                      <td>${ship.shipment_number}</td>
-                      <td>${ship.order_number || '-'}</td>
-                      <td>${ship.customer_name || '-'}</td>
+                      <td>${escapeHtml(ship.shipment_number)}</td>
+                      <td>${escapeHtml(ship.order_number || '-')}</td>
+                      <td>${escapeHtml(ship.customer_name || '-')}</td>
                       <td>${formatDate(ship.shipment_date)}</td>
                       <td>${getStatusBadge(ship.status)}</td>
                       <td>${formatDate(ship.created_at)}</td>
@@ -96,7 +96,7 @@ async function viewShipment(id) {
       <div class="detail-grid">
         <div class="detail-item">
           <label>출하번호</label>
-          <div class="value">${ship.shipment_number}</div>
+          <div class="value">${escapeHtml(ship.shipment_number)}</div>
         </div>
         <div class="detail-item">
           <label>상태</label>
@@ -104,7 +104,7 @@ async function viewShipment(id) {
         </div>
         <div class="detail-item">
           <label>주문번호</label>
-          <div class="value">${ship.order_number || '-'}</div>
+          <div class="value">${escapeHtml(ship.order_number || '-')}</div>
         </div>
         <div class="detail-item">
           <label>납기일</label>
@@ -112,7 +112,7 @@ async function viewShipment(id) {
         </div>
         <div class="detail-item">
           <label>거래처</label>
-          <div class="value">${ship.customer_name || '-'}</div>
+          <div class="value">${escapeHtml(ship.customer_name || '-')}</div>
         </div>
         <div class="detail-item">
           <label>출하일</label>
@@ -120,7 +120,7 @@ async function viewShipment(id) {
         </div>
         <div class="detail-item">
           <label>연락처</label>
-          <div class="value">${ship.contact || '-'}</div>
+          <div class="value">${escapeHtml(ship.contact || '-')}</div>
         </div>
         <div class="detail-item">
           <label>등록일</label>
@@ -129,7 +129,7 @@ async function viewShipment(id) {
       </div>
       <div class="detail-item" style="margin-top: 15px;">
         <label>배송지</label>
-        <div class="value">${ship.address || '-'}</div>
+        <div class="value">${escapeHtml(ship.address || '-')}</div>
       </div>
 
       <h4 style="margin-top: 20px; margin-bottom: 10px;">출하 품목</h4>
@@ -145,9 +145,9 @@ async function viewShipment(id) {
         <tbody>
           ${ship.items.map(item => `
             <tr>
-              <td>${item.product_code}</td>
-              <td>${item.product_name}</td>
-              <td>${item.unit}</td>
+              <td>${escapeHtml(item.product_code)}</td>
+              <td>${escapeHtml(item.product_name)}</td>
+              <td>${escapeHtml(item.unit)}</td>
               <td>${formatNumber(item.quantity)}</td>
             </tr>
           `).join('')}
@@ -184,7 +184,7 @@ async function openShipmentModal() {
             <label>주문 *</label>
             <select id="shipment-order" class="form-control" required onchange="loadOrderItems(this.value)">
               <option value="">선택하세요</option>
-              ${orders.map(o => `<option value="${o.id}">${o.order_number} - ${o.customer_name || ''}</option>`).join('')}
+              ${orders.map(o => `<option value="${o.id}">${escapeHtml(o.order_number)} - ${escapeHtml(o.customer_name || '')}</option>`).join('')}
             </select>
           </div>
           <div class="form-group">
@@ -261,7 +261,7 @@ function renderShipmentItems() {
       <tbody>
         ${shipmentItems.map((item, index) => `
           <tr>
-            <td>${item.product_name}</td>
+            <td>${escapeHtml(item.product_name)}</td>
             <td>${formatNumber(item.order_qty)}</td>
             <td style="${item.stock < item.order_qty ? 'color: var(--danger-color);' : ''}">${formatNumber(item.stock)}</td>
             <td>

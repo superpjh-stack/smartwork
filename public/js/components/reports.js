@@ -71,7 +71,7 @@ async function renderProductionReport() {
                   <tbody>
                     ${daily.map(d => `
                       <tr>
-                        <td>${d.date}</td>
+                        <td>${escapeHtml(d.date)}</td>
                         <td>${formatNumber(d.production_count)}</td>
                         <td>${formatNumber(d.total_actual)}</td>
                         <td style="color: var(--warning-color);">${formatNumber(d.total_defect)}</td>
@@ -105,7 +105,7 @@ async function renderProductionReport() {
                   <tbody>
                     ${byProduct.filter(p => p.production_count > 0).map(p => `
                       <tr>
-                        <td>${p.product_code} - ${p.product_name}</td>
+                        <td>${escapeHtml(p.product_code)} - ${escapeHtml(p.product_name)}</td>
                         <td>${formatNumber(p.production_count)}</td>
                         <td>${formatNumber(p.total_actual)}</td>
                         <td style="color: ${p.defect_rate > 5 ? 'var(--danger-color)' : 'var(--text-color)'};">
@@ -154,7 +154,7 @@ async function renderShipmentReport() {
                 <tbody>
                   ${daily.map(d => `
                     <tr>
-                      <td>${d.date}</td>
+                      <td>${escapeHtml(d.date)}</td>
                       <td>${formatNumber(d.shipment_count)}</td>
                       <td>${formatNumber(d.total_quantity)}</td>
                     </tr>
@@ -209,7 +209,7 @@ async function renderSalesReport() {
                   <tbody>
                     ${byCustomer.filter(c => c.order_count > 0).map(c => `
                       <tr>
-                        <td>${c.customer_code} - ${c.customer_name}</td>
+                        <td>${escapeHtml(c.customer_code)} - ${escapeHtml(c.customer_name)}</td>
                         <td>${formatNumber(c.order_count)}</td>
                         <td>${formatNumber(c.total_sales)}원</td>
                         <td>${totalSales > 0 ? ((c.total_sales / totalSales) * 100).toFixed(1) : 0}%</td>
@@ -246,7 +246,7 @@ async function renderSalesReport() {
                   <tbody>
                     ${monthly.map(m => `
                       <tr>
-                        <td>${m.month}</td>
+                        <td>${escapeHtml(m.month)}</td>
                         <td>${formatNumber(m.order_count)}</td>
                         <td>${formatNumber(m.total_sales)}원</td>
                       </tr>
@@ -317,15 +317,15 @@ async function renderInventoryReport() {
                 <tbody>
                   ${report.items.map(item => `
                     <tr>
-                      <td>${item.product_code}</td>
-                      <td>${item.product_name}</td>
-                      <td>${item.unit}</td>
+                      <td>${escapeHtml(item.product_code)}</td>
+                      <td>${escapeHtml(item.product_name)}</td>
+                      <td>${escapeHtml(item.unit)}</td>
                       <td>${formatNumber(item.price)}원</td>
                       <td style="${item.current_stock <= 10 ? 'color: var(--danger-color); font-weight: bold;' : ''}">
                         ${formatNumber(item.current_stock)}
                       </td>
                       <td>${formatNumber(item.stock_value)}원</td>
-                      <td>${item.location || '-'}</td>
+                      <td>${escapeHtml(item.location || '-')}</td>
                     </tr>
                   `).join('')}
                 </tbody>

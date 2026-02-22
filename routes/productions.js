@@ -51,7 +51,8 @@ router.get('/', async (req, res) => {
       order_number: p.order?.orderNumber ?? null,
     })));
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -92,7 +93,8 @@ router.get('/:id', async (req, res) => {
       order_number: production.order?.orderNumber ?? null,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -124,7 +126,8 @@ router.post('/', async (req, res) => {
       message: '생산이 등록되었습니다.',
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -166,7 +169,8 @@ router.patch('/:id/start', async (req, res) => {
 
     res.json({ message: '생산이 시작되었습니다.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -226,7 +230,8 @@ router.patch('/:id/complete', async (req, res) => {
 
     res.json({ message: '생산이 완료되었습니다.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -253,7 +258,8 @@ router.patch('/:id/stop', async (req, res) => {
 
     res.json({ message: '생산이 중단되었습니다.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -286,7 +292,8 @@ router.put('/:id', async (req, res) => {
 
     res.json({ message: '생산이 수정되었습니다.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -309,7 +316,8 @@ router.delete('/:id', async (req, res) => {
     await prisma.production.delete({ where: { id: productionId } });
     res.json({ message: '생산이 삭제되었습니다.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 

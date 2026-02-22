@@ -22,21 +22,21 @@ async function renderSettings() {
             <div class="form-row">
               <div class="form-group">
                 <label for="setting-company">회사명</label>
-                <input type="text" id="setting-company" class="form-control" value="${settings.company_name || '스마트공방'}">
+                <input type="text" id="setting-company" class="form-control" value="${escapeHtml(settings.company_name || '스마트공방')}">
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label for="setting-order-prefix">주문번호 접두어</label>
-                <input type="text" id="setting-order-prefix" class="form-control" value="${settings.order_prefix || 'ORD'}" placeholder="예: ORD">
+                <input type="text" id="setting-order-prefix" class="form-control" value="${escapeHtml(settings.order_prefix || 'ORD')}" placeholder="예: ORD">
               </div>
               <div class="form-group">
                 <label for="setting-production-prefix">생산번호 접두어</label>
-                <input type="text" id="setting-production-prefix" class="form-control" value="${settings.production_prefix || 'PRD'}" placeholder="예: PRD">
+                <input type="text" id="setting-production-prefix" class="form-control" value="${escapeHtml(settings.production_prefix || 'PRD')}" placeholder="예: PRD">
               </div>
               <div class="form-group">
                 <label for="setting-shipment-prefix">출하번호 접두어</label>
-                <input type="text" id="setting-shipment-prefix" class="form-control" value="${settings.shipment_prefix || 'SHP'}" placeholder="예: SHP">
+                <input type="text" id="setting-shipment-prefix" class="form-control" value="${escapeHtml(settings.shipment_prefix || 'SHP')}" placeholder="예: SHP">
               </div>
             </div>
             <div style="margin-top: 20px;">
@@ -83,23 +83,23 @@ async function renderSettings() {
               </div>
               <div class="form-group">
                 <label for="ext-schedule">스케줄 (Cron)</label>
-                <input type="text" id="ext-schedule" class="form-control" value="${extSettings.kpi_external_schedule || '0 6 * * *'}" placeholder="0 6 * * *">
+                <input type="text" id="ext-schedule" class="form-control" value="${escapeHtml(extSettings.kpi_external_schedule || '0 6 * * *')}" placeholder="0 6 * * *">
               </div>
             </div>
             <div class="form-row">
               <div class="form-group" style="flex: 2;">
                 <label for="ext-api-url">API URL</label>
-                <input type="text" id="ext-api-url" class="form-control" value="${extSettings.kpi_external_api_url || ''}" placeholder="https://api.example.com/v1/kpi">
+                <input type="text" id="ext-api-url" class="form-control" value="${escapeHtml(extSettings.kpi_external_api_url || '')}" placeholder="https://api.example.com/v1/kpi">
               </div>
               <div class="form-group">
                 <label for="ext-company-code">사업장 코드</label>
-                <input type="text" id="ext-company-code" class="form-control" value="${extSettings.kpi_external_company_code || ''}" placeholder="SF-001">
+                <input type="text" id="ext-company-code" class="form-control" value="${escapeHtml(extSettings.kpi_external_company_code || '')}" placeholder="SF-001">
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label for="ext-api-key">API Key</label>
-                <input type="text" id="ext-api-key" class="form-control" value="${extSettings.kpi_external_api_key || ''}" placeholder="새 키를 입력하거나 비워두세요">
+                <input type="text" id="ext-api-key" class="form-control" value="${escapeHtml(extSettings.kpi_external_api_key || '')}" placeholder="새 키를 입력하거나 비워두세요">
               </div>
               <div class="form-group">
                 <label for="ext-max-retry">최대 재시도</label>
@@ -241,13 +241,13 @@ async function loadExternalHistory(page) {
         retrying: '<span class="badge badge-warning">재시도중</span>',
         pending: '<span class="badge badge-secondary">대기</span>',
       };
-      return map[s] || s;
+      return map[s] || escapeHtml(s);
     };
 
     const rows = result.data.map(t => `
       <tr>
         <td>${t.id}</td>
-        <td>${t.reportDate}</td>
+        <td>${escapeHtml(t.reportDate)}</td>
         <td>${new Date(t.transmittedAt).toLocaleString('ko-KR')}</td>
         <td>${statusBadge(t.status)}</td>
         <td>${t.statusCode || '-'}</td>

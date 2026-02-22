@@ -1,12 +1,10 @@
 const express = require('express');
-const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const router = express.Router();
 
 // 비밀번호 해싱
-function hashPassword(password) {
-  const salt = crypto.randomBytes(16).toString('hex');
-  const hash = crypto.createHash('sha256').update(password + salt).digest('hex');
-  return salt + ':' + hash;
+async function hashPassword(password) {
+  return bcrypt.hash(password, 12);
 }
 
 // 회사 목록 (사용자 생성 시 필요 - /:id보다 먼저 정의해야 함)
@@ -25,7 +23,8 @@ router.get('/companies/list', async (req, res) => {
       name: c.name,
     })));
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -55,7 +54,8 @@ router.get('/', async (req, res) => {
       company_code: u.company?.companyCode ?? null,
     })));
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -91,7 +91,8 @@ router.get('/:id', async (req, res) => {
       company_code: user.company?.companyCode ?? null,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -115,7 +116,7 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    const passwordHash = hashPassword(password);
+    const passwordHash = await hashPassword(password);
     const user = await prisma.user.create({
       data: {
         username,
@@ -135,7 +136,8 @@ router.post('/', async (req, res) => {
     if (error.code === 'P2002') {
       return res.status(400).json({ error: '이미 존재하는 아이디입니다.' });
     }
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -174,7 +176,7 @@ router.put('/:id', async (req, res) => {
       if (password.length < 4) {
         return res.status(400).json({ error: '비밀번호는 4자 이상이어야 합니다.' });
       }
-      data.passwordHash = hashPassword(password);
+      data.passwordHash = await hashPassword(password);
     }
 
     await prisma.user.update({ where: { id: targetId }, data });
@@ -184,7 +186,8 @@ router.put('/:id', async (req, res) => {
     if (error.code === 'P2002') {
       return res.status(400).json({ error: '이미 존재하는 아이디입니다.' });
     }
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -211,7 +214,8 @@ router.delete('/:id', async (req, res) => {
     if (error.code === 'P2025') {
       return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
     }
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 

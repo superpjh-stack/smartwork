@@ -11,7 +11,8 @@ router.get('/', async (req, res) => {
     settings.forEach(s => settingsObj[s.key] = s.value);
     res.json(settingsObj);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -28,7 +29,8 @@ router.get('/:key', async (req, res) => {
 
     res.json(setting);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -45,7 +47,8 @@ router.put('/:key', async (req, res) => {
     });
     res.json({ message: '설정이 저장되었습니다.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -67,7 +70,8 @@ router.post('/bulk', async (req, res) => {
 
     res.json({ message: '설정이 저장되었습니다.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -82,7 +86,8 @@ router.delete('/:key', async (req, res) => {
     if (error.code === 'P2025') {
       return res.status(404).json({ error: '설정을 찾을 수 없습니다.' });
     }
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 

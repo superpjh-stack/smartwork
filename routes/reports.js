@@ -38,7 +38,8 @@ router.get('/production/daily', async (req, res) => {
 
     res.json(report);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -83,7 +84,8 @@ router.get('/production/by-product', async (req, res) => {
 
     res.json(report);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -123,7 +125,8 @@ router.get('/shipment/daily', async (req, res) => {
 
     res.json(report);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -163,7 +166,8 @@ router.get('/sales/by-customer', async (req, res) => {
 
     res.json(report);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -187,7 +191,8 @@ router.get('/sales/monthly', async (req, res) => {
 
     res.json(report);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -223,7 +228,8 @@ router.get('/inventory/status', async (req, res) => {
 
     res.json({ items: report, summary });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -283,7 +289,8 @@ router.get('/inventory/history', async (req, res) => {
       product_name: h.product_name,
     })));
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 

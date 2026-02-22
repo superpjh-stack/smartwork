@@ -47,8 +47,8 @@ async function renderOrders() {
                 <tbody>
                   ${orders.map(order => `
                     <tr>
-                      <td>${order.order_number}</td>
-                      <td>${order.customer_name || '-'}</td>
+                      <td>${escapeHtml(order.order_number)}</td>
+                      <td>${escapeHtml(order.customer_name || '-')}</td>
                       <td>${formatDate(order.order_date)}</td>
                       <td>${formatDate(order.due_date)}</td>
                       <td>${getStatusBadge(order.status)}</td>
@@ -100,7 +100,7 @@ async function viewOrder(id) {
       <div class="detail-grid">
         <div class="detail-item">
           <label>주문번호</label>
-          <div class="value">${order.order_number}</div>
+          <div class="value">${escapeHtml(order.order_number)}</div>
         </div>
         <div class="detail-item">
           <label>상태</label>
@@ -108,11 +108,11 @@ async function viewOrder(id) {
         </div>
         <div class="detail-item">
           <label>거래처</label>
-          <div class="value">${order.customer_name || '-'}</div>
+          <div class="value">${escapeHtml(order.customer_name || '-')}</div>
         </div>
         <div class="detail-item">
           <label>연락처</label>
-          <div class="value">${order.contact || '-'}</div>
+          <div class="value">${escapeHtml(order.contact || '-')}</div>
         </div>
         <div class="detail-item">
           <label>주문일</label>
@@ -125,7 +125,7 @@ async function viewOrder(id) {
       </div>
       <div class="detail-item" style="margin-top: 15px;">
         <label>배송지</label>
-        <div class="value">${order.address || '-'}</div>
+        <div class="value">${escapeHtml(order.address || '-')}</div>
       </div>
 
       <h4 style="margin-top: 20px; margin-bottom: 10px;">주문 품목</h4>
@@ -143,9 +143,9 @@ async function viewOrder(id) {
         <tbody>
           ${order.items.map(item => `
             <tr>
-              <td>${item.product_code}</td>
-              <td>${item.product_name}</td>
-              <td>${item.unit}</td>
+              <td>${escapeHtml(item.product_code)}</td>
+              <td>${escapeHtml(item.product_name)}</td>
+              <td>${escapeHtml(item.unit)}</td>
               <td>${formatNumber(item.quantity)}</td>
               <td>${formatNumber(item.unit_price)}원</td>
               <td>${formatNumber(item.quantity * item.unit_price)}원</td>
@@ -205,7 +205,7 @@ async function openOrderModal(id = null) {
             <label>거래처 *</label>
             <select id="order-customer" class="form-control" required>
               <option value="">선택하세요</option>
-              ${customers.map(c => `<option value="${c.id}" ${order.customer_id == c.id ? 'selected' : ''}>${c.customer_code} - ${c.name}</option>`).join('')}
+              ${customers.map(c => `<option value="${c.id}" ${order.customer_id == c.id ? 'selected' : ''}>${escapeHtml(c.customer_code)} - ${escapeHtml(c.name)}</option>`).join('')}
             </select>
           </div>
           <div class="form-group">
@@ -219,7 +219,7 @@ async function openOrderModal(id = null) {
           <div class="form-group" style="flex: 2;">
             <select id="add-item-product" class="form-control">
               <option value="">제품 선택</option>
-              ${products.map(p => `<option value="${p.id}" data-name="${p.product_code} - ${p.name}" data-price="${p.price}">${p.product_code} - ${p.name} (${formatNumber(p.price)}원)</option>`).join('')}
+              ${products.map(p => `<option value="${p.id}" data-name="${escapeHtml(p.product_code)} - ${escapeHtml(p.name)}" data-price="${p.price}">${escapeHtml(p.product_code)} - ${escapeHtml(p.name)} (${formatNumber(p.price)}원)</option>`).join('')}
             </select>
           </div>
           <div class="form-group" style="flex: 1;">
@@ -318,7 +318,7 @@ function renderOrderItems() {
     total += amount;
     return `
             <tr>
-              <td>${item.product_name}</td>
+              <td>${escapeHtml(item.product_name)}</td>
               <td>${formatNumber(item.quantity)}</td>
               <td>${formatNumber(item.unit_price)}원</td>
               <td>${formatNumber(amount)}원</td>

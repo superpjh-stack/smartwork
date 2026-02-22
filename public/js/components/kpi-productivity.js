@@ -140,7 +140,7 @@ async function renderKpiProductivity() {
         <input type="date" id="kpi-prod-end" value="${endDate}">
         <select id="kpi-prod-product">
           <option value="">전체 제품</option>
-          ${products.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+          ${products.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('')}
         </select>
         <button class="btn btn-primary btn-sm" onclick="loadProductivityData()">조회</button>
         <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
@@ -198,7 +198,7 @@ async function renderKpiProductivity() {
 
     loadProductivityData();
   } catch (error) {
-    container.innerHTML = `<div class="empty-state"><i data-lucide="alert-circle" class="empty-icon"></i><p>데이터 로드 실패: ${error.message}</p></div>`;
+    container.innerHTML = `<div class="empty-state"><i data-lucide="alert-circle" class="empty-icon"></i><p>데이터 로드 실패: ${escapeHtml(error.message)}</p></div>`;
   }
 }
 
@@ -245,7 +245,7 @@ async function loadProductivityData() {
         const status = getKpiStatus(d.pi, 'pi');
         return `
           <tr>
-            <td>${d.date}</td>
+            <td>${escapeHtml(d.date)}</td>
             <td>${formatNumber(d.production_count)}</td>
             <td>${formatNumber(d.actual_qty)}</td>
             <td>${formatNumber(d.planned_qty)}</td>
@@ -264,8 +264,8 @@ async function loadProductivityData() {
         const status = getKpiStatus(p.pi, 'pi');
         return `
           <tr>
-            <td>${p.product_code}</td>
-            <td>${p.product_name}</td>
+            <td>${escapeHtml(p.product_code)}</td>
+            <td>${escapeHtml(p.product_name)}</td>
             <td>${formatNumber(p.production_count)}</td>
             <td>${formatNumber(p.actual_qty)}</td>
             <td>${formatNumber(p.planned_qty)}</td>

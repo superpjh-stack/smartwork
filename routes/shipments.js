@@ -44,7 +44,8 @@ router.get('/', async (req, res) => {
       customer_name: s.order?.customer?.name ?? null,
     })));
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -96,7 +97,8 @@ router.get('/:id', async (req, res) => {
       })),
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -141,7 +143,8 @@ router.post('/', async (req, res) => {
       message: '출하가 등록되었습니다.',
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -224,7 +227,8 @@ router.patch('/:id/complete', async (req, res) => {
 
     res.json({ message: '출하가 완료되었습니다.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -250,7 +254,8 @@ router.patch('/:id/cancel', async (req, res) => {
 
     res.json({ message: '출하가 취소되었습니다.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -273,7 +278,8 @@ router.delete('/:id', async (req, res) => {
     await prisma.shipment.delete({ where: { id: shipmentId } });
     res.json({ message: '출하가 삭제되었습니다.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 

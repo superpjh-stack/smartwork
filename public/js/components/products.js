@@ -32,9 +32,9 @@ async function renderProducts() {
                 <tbody>
                   ${products.map(product => `
                     <tr>
-                      <td>${product.product_code}</td>
-                      <td>${product.name}</td>
-                      <td>${product.unit}</td>
+                      <td>${escapeHtml(product.product_code)}</td>
+                      <td>${escapeHtml(product.name)}</td>
+                      <td>${escapeHtml(product.unit)}</td>
                       <td>${formatNumber(product.price)}원</td>
                       <td style="${product.stock_quantity <= 10 ? 'color: var(--color-danger); font-weight: bold;' : ''}">
                         ${formatNumber(product.stock_quantity)}
@@ -84,17 +84,17 @@ async function openProductModal(id = null) {
       <div class="form-row">
         <div class="form-group">
           <label for="product-code">제품코드 *</label>
-          <input type="text" id="product-code" class="form-control" value="${product.product_code}" required>
+          <input type="text" id="product-code" class="form-control" value="${escapeHtml(product.product_code)}" required>
         </div>
         <div class="form-group">
           <label for="product-name">제품명 *</label>
-          <input type="text" id="product-name" class="form-control" value="${product.name}" required>
+          <input type="text" id="product-name" class="form-control" value="${escapeHtml(product.name)}" required>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label for="product-unit">단위</label>
-          <input type="text" id="product-unit" class="form-control" value="${product.unit}" placeholder="예: 개, EA, kg">
+          <input type="text" id="product-unit" class="form-control" value="${escapeHtml(product.unit)}" placeholder="예: 개, EA, kg">
         </div>
         <div class="form-group">
           <label for="product-price">단가</label>

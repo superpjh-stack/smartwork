@@ -34,7 +34,8 @@ router.get('/summary', async (req, res) => {
       lowStock,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -61,7 +62,8 @@ router.get('/recent-orders', async (req, res) => {
       customer_name: o.customer?.name ?? null,
     })));
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -93,7 +95,8 @@ router.get('/recent-productions', async (req, res) => {
       product_name: p.product.name,
     })));
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 
@@ -118,7 +121,8 @@ router.get('/inventory-status', async (req, res) => {
       product_code: i.product.productCode,
     })));
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
 

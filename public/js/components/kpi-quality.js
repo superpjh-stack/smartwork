@@ -28,7 +28,7 @@ async function renderKpiQuality() {
         <input type="date" id="kpi-qual-end" value="${endDate}">
         <select id="kpi-qual-product">
           <option value="">전체 제품</option>
-          ${products.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+          ${products.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('')}
         </select>
         <button class="btn btn-primary btn-sm" onclick="loadQualityData()">조회</button>
       </div>
@@ -89,7 +89,7 @@ async function renderKpiQuality() {
 
     loadQualityData();
   } catch (error) {
-    container.innerHTML = `<div class="empty-state"><i data-lucide="alert-circle" class="empty-icon"></i><p>데이터 로드 실패: ${error.message}</p></div>`;
+    container.innerHTML = `<div class="empty-state"><i data-lucide="alert-circle" class="empty-icon"></i><p>데이터 로드 실패: ${escapeHtml(error.message)}</p></div>`;
   }
 }
 
@@ -147,7 +147,7 @@ async function loadQualityData() {
       dailyBody.innerHTML = data.daily.map(d => {
         return `
           <tr>
-            <td>${d.date}</td>
+            <td>${escapeHtml(d.date)}</td>
             <td>${formatNumber(d.production_count)}</td>
             <td>${formatNumber(d.actual_qty)}</td>
             <td>${formatNumber(d.defect_qty)}</td>
@@ -169,8 +169,8 @@ async function loadQualityData() {
       productBody.innerHTML = data.byProduct.map(p => {
         return `
           <tr>
-            <td>${p.product_code}</td>
-            <td>${p.product_name}</td>
+            <td>${escapeHtml(p.product_code)}</td>
+            <td>${escapeHtml(p.product_name)}</td>
             <td>${formatNumber(p.actual_qty)}</td>
             <td>${formatNumber(p.defect_qty)}</td>
             <td>${formatNumber(p.waste_qty)}</td>

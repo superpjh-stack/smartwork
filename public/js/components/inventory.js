@@ -57,13 +57,13 @@ async function renderInventoryList() {
                 <tbody>
                   ${inventory.map(inv => `
                     <tr>
-                      <td>${inv.product_code}</td>
-                      <td>${inv.product_name}</td>
-                      <td>${inv.unit}</td>
+                      <td>${escapeHtml(inv.product_code)}</td>
+                      <td>${escapeHtml(inv.product_name)}</td>
+                      <td>${escapeHtml(inv.unit)}</td>
                       <td style="${inv.quantity <= 10 ? 'color: var(--danger-color); font-weight: bold;' : ''}">
                         ${formatNumber(inv.quantity)}
                       </td>
-                      <td>${inv.location || '-'}</td>
+                      <td>${escapeHtml(inv.location || '-')}</td>
                       <td>${formatDateTime(inv.updated_at)}</td>
                       <td class="action-btns">
                         <button class="btn btn-sm btn-secondary" onclick="openInventoryAdjustModal(${inv.product_id})">조정</button>
@@ -116,13 +116,13 @@ async function renderInventoryHistory() {
                   ${history.map(h => `
                     <tr>
                       <td>${formatDateTime(h.created_at)}</td>
-                      <td>${h.product_code}</td>
-                      <td>${h.product_name}</td>
+                      <td>${escapeHtml(h.product_code)}</td>
+                      <td>${escapeHtml(h.product_name)}</td>
                       <td>${getChangeTypeBadge(h.change_type)}</td>
                       <td style="color: ${h.quantity >= 0 ? 'var(--secondary-color)' : 'var(--danger-color)'}">
                         ${h.quantity >= 0 ? '+' : ''}${formatNumber(h.quantity)}
                       </td>
-                      <td>${h.reason || '-'}</td>
+                      <td>${escapeHtml(h.reason || '-')}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -150,7 +150,7 @@ function getChangeTypeBadge(type) {
     '사용': 'warning',
     '조정': 'secondary',
   };
-  return `<span class="badge badge-${colors[type] || 'secondary'}">${type}</span>`;
+  return `<span class="badge badge-${colors[escapeHtml(type)] || 'secondary'}">${escapeHtml(type)}</span>`;
 }
 
 // 입고 모달
@@ -164,7 +164,7 @@ async function openInventoryReceiveModal() {
           <label>제품 *</label>
           <select id="receive-product" class="form-control" required>
             <option value="">선택하세요</option>
-            ${products.map(p => `<option value="${p.id}">${p.product_code} - ${p.name}</option>`).join('')}
+            ${products.map(p => `<option value="${p.id}">${escapeHtml(p.product_code)} - ${escapeHtml(p.name)}</option>`).join('')}
           </select>
         </div>
         <div class="form-group">
@@ -221,7 +221,7 @@ async function openInventoryUseModal() {
           <label>제품 *</label>
           <select id="use-product" class="form-control" required>
             <option value="">선택하세요</option>
-            ${products.map(p => `<option value="${p.id}">${p.product_code} - ${p.name} (재고: ${p.stock_quantity})</option>`).join('')}
+            ${products.map(p => `<option value="${p.id}">${escapeHtml(p.product_code)} - ${escapeHtml(p.name)} (재고: ${p.stock_quantity})</option>`).join('')}
           </select>
         </div>
         <div class="form-group">
@@ -285,7 +285,7 @@ async function openInventoryAdjustModal(productId) {
         <input type="hidden" id="adjust-product-id" value="${productId}">
         <div class="form-group">
           <label>제품</label>
-          <input type="text" class="form-control" value="${inventory.product_code} - ${inventory.product_name}" disabled>
+          <input type="text" class="form-control" value="${escapeHtml(inventory.product_code)} - ${escapeHtml(inventory.product_name)}" disabled>
         </div>
         <div class="form-group">
           <label>현재 수량</label>
@@ -358,7 +358,7 @@ async function openInventoryHistoryModal(productId) {
                 <td style="color: ${h.quantity >= 0 ? 'var(--secondary-color)' : 'var(--danger-color)'}">
                   ${h.quantity >= 0 ? '+' : ''}${formatNumber(h.quantity)}
                 </td>
-                <td>${h.reason || '-'}</td>
+                <td>${escapeHtml(h.reason || '-')}</td>
               </tr>
             `).join('')}
           </tbody>

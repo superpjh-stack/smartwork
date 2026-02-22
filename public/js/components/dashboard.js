@@ -92,8 +92,8 @@ async function renderDashboard() {
                   <tbody>
                     ${recentOrders.map(order => `
                       <tr>
-                        <td>${order.order_number}</td>
-                        <td>${order.customer_name || '-'}</td>
+                        <td>${escapeHtml(order.order_number)}</td>
+                        <td>${escapeHtml(order.customer_name || '-')}</td>
                         <td>${getStatusBadge(order.status)}</td>
                         <td>${formatNumber(order.total_amount)}원</td>
                       </tr>
@@ -126,8 +126,8 @@ async function renderDashboard() {
                   <tbody>
                     ${recentProductions.map(prod => `
                       <tr>
-                        <td>${prod.production_number}</td>
-                        <td>${prod.product_name || '-'}</td>
+                        <td>${escapeHtml(prod.production_number)}</td>
+                        <td>${escapeHtml(prod.product_name || '-')}</td>
                         <td>${getStatusBadge(prod.status)}</td>
                         <td>${formatNumber(prod.actual_qty)}/${formatNumber(prod.planned_qty)}</td>
                       </tr>
@@ -161,12 +161,12 @@ async function renderDashboard() {
                 <tbody>
                   ${inventoryStatus.map(inv => `
                     <tr>
-                      <td>${inv.product_code}</td>
-                      <td>${inv.product_name}</td>
+                      <td>${escapeHtml(inv.product_code)}</td>
+                      <td>${escapeHtml(inv.product_name)}</td>
                       <td style="${inv.quantity <= 10 ? 'color: var(--color-danger); font-weight: bold;' : ''}">
                         ${formatNumber(inv.quantity)}
                       </td>
-                      <td>${inv.location || '-'}</td>
+                      <td>${escapeHtml(inv.location || '-')}</td>
                     </tr>
                   `).join('')}
                 </tbody>
